@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');
 
 const USERNAME = process.env.USERNAME;
 const PASSWORD = process.env.PASSWORD;
-const BASE_URL = 'https://r1.rwin.jp/CCSTsukuba';
+const BASE_URL = process.env.BASE_URL;
 
 (async () => {
   const browser = await puppeteer.launch({
