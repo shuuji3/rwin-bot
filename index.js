@@ -22,32 +22,51 @@ const BASE_URL = process.env.BASE_URL;
   await page.goto(`${BASE_URL}/ac_reservestateroom`);
   await page.waitFor('#ROOMLIST');
 
-  const buildingNameToIDMap = await getBuildingNameToIDMap(page);
-  for (const [buildingName, buildingID] of buildingNameToIDMap) {
-    await page.select('#BILDING', buildingID);
+  const roomTypeNameToIDMap = await getRoomTypeNameToIDMap(page);
+  for (const [roomTypeName, roomTypeID] of roomTypeNameToIDMap) {
+    await page.select('#ROOM_TYPE', roomTypeID);
     await page.waitFor(3000);
 
-    const roomNameToIDMap = await getRoomNameToIDMap(page);
-    for (const [roomName, roomID] of roomNameToIDMap) {
-      // TODO: waitFor network request ends (very late response results in a timeout)
-      await page.select('#ROOMLIST', roomID);
-      await page.waitFor('#kekka > div');
+    const buildingNameToIDMap = await getBuildingNameToIDMap(page);
+    for (const [buildingName, buildingID] of buildingNameToIDMap) {
+      await page.select('#BILDING', buildingID);
+      await page.waitFor(3000);
 
-      await page.screenshot({
-        path: `screenshots/${buildingName}_${roomName}.png`,
-        fullPage: true,
-      });
+      const roomNameToIDMap = await getRoomNameToIDMap(page);
+      for (const [roomName, roomID] of roomNameToIDMap) {
+        // TODO: waitFor network request ends (very late response results in a timeout)
+        await page.select('#ROOMLIST', roomID);
+        await page.waitFor('#kekka > div');
 
-      // Clear schedule table DOM for the next request
-      await page.$eval('#kekka', div => (div.innerHTML = ''));
+        await page.screenshot({
+          path: `screenshots/${roomTypeName}_${buildingName}_${roomName}.png`,
+          fullPage: true,
+        });
 
-      // TODO: implement convert function from DOM to schedule list
-      // TODO: implement save schedule list to database
+        // Clear schedule table DOM for the next request
+        await page.$eval('#kekka', div => (div.innerHTML = ''));
+
+        // TODO: implement convert function from DOM to schedule list
+        // TODO: implement save schedule list to database
+      }
     }
   }
 
   await browser.close();
 })();
+
+/**
+ * 部屋種別名から部屋種別IDの文字列へのMapを返します。
+ *
+ * 例:
+ *   {"会議室" => "1", "ゲストルーム" => "2"}
+ *
+ * @param page
+ * @returns {Promise<Map<string, string>>}
+ */
+async function getRoomTypeNameToIDMap(page) {
+  return getNameToIDMapBySelector(page, '#ROOM_TYPE option');
+}
 
 /**
  * 施設名から施設IDの文字列へのMapを返します。
@@ -87,7 +106,5 @@ async function getNameToIDMapBySelector(page, optionSelector) {
       .filter(option => option.value !== '')
       .map(option => [option.textContent.trim(), option.value])
   );
-  console.log(buildingNameAndNumberList);
-
   return new Map(buildingNameAndNumberList);
 }
