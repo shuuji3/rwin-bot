@@ -25,5 +25,14 @@ services:
     ports:
     - 3000:3000
     command: node src/index.js
+  web:
+    image: nginx:alpine
+    volumes:
+      - type: bind
+        source: $PWD/services/web/dist/
+        target: /usr/share/nginx/html/
+        read_only: true
+    ports:
+    - 80:80
 volumes:
   db:
