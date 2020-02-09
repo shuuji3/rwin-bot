@@ -1,0 +1,29 @@
+version: '3.7'
+services:
+  save-schedules:
+    build:
+      context: ./services/save-schedules/
+    volumes:
+      - type: bind
+        source: $PWD/services/save-schedules/
+        target: /app/
+      - type: volume
+        source: db
+        target: /db/
+    env_file:
+      - .env
+  api-server:
+    build:
+      context: ./services/api-server
+    volumes:
+      - type: bind
+        source: $PWD/services/api-server/
+        target: /home/node/app/
+      - type: volume
+        source: db
+        target: /db/
+    ports:
+    - 3000:3000
+    command: node src/index.js
+volumes:
+  db:

@@ -8,6 +8,6 @@ const createConnection = require('./createConnection');
  */
 async function saveSchedules(schedules) {
   const knex = createConnection();
-
   await knex.batchInsert('schedules', schedules);
+  console.log(schedules)
 }

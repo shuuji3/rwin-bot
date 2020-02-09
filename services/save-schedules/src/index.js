@@ -58,7 +58,6 @@ const BASE_URL = process.env.BASE_URL;
  */
 async function getBrowser() {
   return await puppeteer.launch({
-    headless: false,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 }
