@@ -4,7 +4,9 @@
   },
   "dependencies": {
     "dayjs": "^1.8.20",
+    "knex": "^0.20.9",
     "lodash": "^4.17.15",
-    "puppeteer": "^2.1.1"
+    "puppeteer": "^2.1.1",
+    "sqlite3": "^4.1.1"
   }
 }

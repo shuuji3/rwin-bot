@@ -4,23 +4,17 @@ const puppeteer = require('puppeteer');
 
 const getSchedules = require('./getSchedules');
 const saveSchedules = require('./saveSchedules');
+const resetDatabase = require('./resetDatabase');
 
 const USERNAME = process.env.USERNAME;
 const PASSWORD = process.env.PASSWORD;
 const BASE_URL = process.env.BASE_URL;
 
 (async () => {
-  const browser = await puppeteer.launch({
-    headless: false,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  });
+  await resetDatabase();
 
-  // ログイン
-  const page = await browser.newPage();
-  await page.goto(`${BASE_URL}/`);
-  await page.content();
-  await page.type('[name="txt_id"]', USERNAME);
-  await page.type('[name="txt_pass"]', PASSWORD + '\n');
+  const browser = await getBrowser();
+  const page = await login(browser);
 
   // 「施設単位」ページへ移動
   await page.goto(`${BASE_URL}/ac_reservestateroom`);
@@ -47,7 +41,7 @@ const BASE_URL = process.env.BASE_URL;
           roomName,
         });
 
-        saveSchedules(schedules);
+        await saveSchedules(schedules);
 
         // Clear schedule table DOM for the next request
         await page.$eval('#kekka', div => (div.innerHTML = ''));
@@ -57,6 +51,31 @@ const BASE_URL = process.env.BASE_URL;
 
   await browser.close();
 })();
+
+/**
+ * ブラウザオブジェクトを作成する。
+ * @returns {Promise<Browser>}
+ */
+async function getBrowser() {
+  return await puppeteer.launch({
+    headless: false,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+}
+
+/**
+ * ユーザーとしてログインし、ページオブジェクトを返す。
+ * @param {Browser} browser
+ * @return {Promise<Page>}
+ */
+async function login(browser) {
+  const page = await browser.newPage();
+  await page.goto(`${BASE_URL}/`);
+  await page.content();
+  await page.type('[name="txt_id"]', USERNAME);
+  await page.type('[name="txt_pass"]', PASSWORD + '\n');
+  return page;
+}
 
 /**
  * 部屋種別名から部屋種別IDの文字列へのMapを返します。

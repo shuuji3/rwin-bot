@@ -1,7 +1,7 @@
+module.exports = getSchedules;
+
 const dayjs = require('dayjs');
 const _ = require('lodash');
-
-module.exports = getSchedules;
 
 /**
  * 指定した部屋の1ヶ月分のスケジュールリストを取得する。
