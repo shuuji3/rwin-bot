@@ -1,5 +1,10 @@
 {
   "devDependencies": {
     "prettier": "^1.19.1"
+  },
+  "dependencies": {
+    "dayjs": "^1.8.20",
+    "lodash": "^4.17.15",
+    "puppeteer": "^2.1.1"
   }
 }

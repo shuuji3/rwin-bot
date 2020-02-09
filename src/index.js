@@ -2,12 +2,16 @@
 
 const puppeteer = require('puppeteer');
 
+const getSchedules = require('./getSchedules');
+const saveSchedules = require('./saveSchedules');
+
 const USERNAME = process.env.USERNAME;
 const PASSWORD = process.env.PASSWORD;
 const BASE_URL = process.env.BASE_URL;
 
 (async () => {
   const browser = await puppeteer.launch({
+    headless: false,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
@@ -25,29 +29,28 @@ const BASE_URL = process.env.BASE_URL;
   const roomTypeNameToIDMap = await getRoomTypeNameToIDMap(page);
   for (const [roomTypeName, roomTypeID] of roomTypeNameToIDMap) {
     await page.select('#ROOM_TYPE', roomTypeID);
-    await page.waitFor(3000);
+    await page.waitFor(1000);
 
     const buildingNameToIDMap = await getBuildingNameToIDMap(page);
     for (const [buildingName, buildingID] of buildingNameToIDMap) {
       await page.select('#BILDING', buildingID);
-      await page.waitFor(3000);
+      await page.waitFor(1000);
 
       const roomNameToIDMap = await getRoomNameToIDMap(page);
       for (const [roomName, roomID] of roomNameToIDMap) {
-        // TODO: waitFor network request ends (very late response results in a timeout)
         await page.select('#ROOMLIST', roomID);
         await page.waitFor('#kekka > div');
 
-        await page.screenshot({
-          path: `screenshots/${roomTypeName}_${buildingName}_${roomName}.png`,
-          fullPage: true,
+        const schedules = await getSchedules(page, {
+          roomTypeName,
+          buildingName,
+          roomName,
         });
+
+        saveSchedules(schedules);
 
         // Clear schedule table DOM for the next request
         await page.$eval('#kekka', div => (div.innerHTML = ''));
-
-        // TODO: implement convert function from DOM to schedule list
-        // TODO: implement save schedule list to database
       }
     }
   }
