@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 
 const createConnection = require('./createConnection');
 
@@ -8,6 +9,32 @@ const createConnection = require('./createConnection');
   const app = express();
   const port = 3000;
 
+  await createIndexEndpoint(app);
+  await createDatabaseEndpoints(knex, app);
+
+  app.listen(port, () => console.log(`Listening on port ${port} ...`));
+})();
+
+/**
+ * データベースのデータを取得するエンドポイントを作成する。
+ * @param app
+ * @return {Promise<void>}
+ */
+async function createIndexEndpoint(app) {
+  app.get('/', cors(), async (req, res) => {
+    console.log(`GET /`);
+    const apiList = ['GET /', 'GET /api/rooms', 'GET /api/schedules'];
+    res.json(apiList);
+  });
+}
+
+/**
+ * データベースのデータを取得するエンドポイントを作成する。
+ * @param knex
+ * @param app
+ * @return {Promise<void>}
+ */
+async function createDatabaseEndpoints(knex, app) {
   const endpoints = [
     [
       '/api/rooms',
@@ -20,21 +47,19 @@ const createConnection = require('./createConnection');
   ];
 
   for (const [path, schedules] of endpoints) {
-    await createEndpoint(app, path, schedules);
+    await addDatabaseEndpoint(app, path, schedules);
   }
-
-  app.listen(port, () => console.log(`Listening on port ${port} ...`));
-})();
+}
 
 /**
  * pathとscheduleを返す関数からエンドポイントを作成する。
  * @param app
  * @param {string} path
  * @param {Function} queryCallback
- * @returns {Promise<void>}
+ * @return {Promise<void>}
  */
-async function createEndpoint(app, path, queryCallback) {
-  app.get(path, async (req, res) => {
+async function addDatabaseEndpoint(app, path, queryCallback) {
+  app.get(path, cors(), async (req, res) => {
     console.log(`GET ${path}`);
 
     const schedules = await queryCallback(req);
