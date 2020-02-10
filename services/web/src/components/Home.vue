@@ -58,6 +58,9 @@
 <script>
 import axios from 'axios';
 import dayjs from 'dayjs';
+import 'dayjs/locale/ja';
+
+dayjs.locale('ja');
 
 export default {
   name: 'Home',
