@@ -15,7 +15,7 @@
           ストレスフリーで<br />部屋を予約しよう！
         </p>
         <p>
-          <v-btn color="primary" large >
+          <v-btn color="primary" large to="/calendar">
             <v-icon>mdi-calendar-arrow-right</v-icon>
             <span class="ml-1">スケジュールを登録する</span>
           </v-btn>
