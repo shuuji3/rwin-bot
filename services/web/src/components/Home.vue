@@ -11,12 +11,14 @@
       </v-col>
 
       <v-col class="mb-4">
-        <h1 class="display-2 font-weight-bold mb-3">
-          Rwin-bot
-        </h1>
-
         <p class="subheading font-weight-regular">
           ストレスフリーで<br />部屋を予約しよう！
+        </p>
+        <p>
+          <v-btn color="primary" large >
+            <v-icon>mdi-calendar-arrow-right</v-icon>
+            <span class="ml-1">スケジュールを登録する</span>
+          </v-btn>
         </p>
       </v-col>
 
