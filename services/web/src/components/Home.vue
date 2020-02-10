@@ -29,7 +29,7 @@
 
         <v-data-table
           :headers="headers"
-          :items="schedulesSortByStart"
+          :items="recentSchedules"
           class="elevation-1"
         >
           <template v-slot:item.roomName="{ item }">
@@ -37,11 +37,11 @@
               item.roomName
             }}</v-chip>
           </template>
-          <template v-slot:item.start="{ item }">
-            {{ formatDateTime(item.start) }}
+          <template v-slot:item.date="{ item }">
+            {{ formatDate(item.start) }}
           </template>
-          <template v-slot:item.end="{ item }">
-            {{ formatTime(item.end) }}
+          <template v-slot:item.time="{ item }">
+            {{ formatTime(item.start) }} - {{ formatTime(item.end) }}
           </template>
         </v-data-table>
       </v-col>
@@ -50,9 +50,9 @@
 </template>
 
 <style scoped>
-  .room-chip {
-    max-width: 10em;
-  }
+.room-chip {
+  max-width: 10em;
+}
 </style>
 
 <script>
@@ -65,21 +65,25 @@ export default {
   data: () => ({
     headers: [
       { text: '場所', value: 'roomName' },
-      { text: '開始時刻', value: 'start' },
-      { text: '終了時刻', value: 'end' },
-      { text: '予約者', value: 'author' },
+      { text: '日付', value: 'date' },
+      { text: '時刻', value: 'time' },
       { text: 'スケジュール', value: 'title' },
+      { text: '予約者', value: 'author' },
     ],
     schedules: [],
   }),
 
   computed: {
-    schedulesSortByStart() {
+    /**
+     * 予定が早い順に今後の予定リストを取得する。
+     * @return {object[]}
+     */
+    recentSchedules() {
       const sortedSchedules = this.schedules.slice();
       sortedSchedules.sort(
         (schedule1, schedule2) => schedule1.start - schedule2.start
       );
-      return sortedSchedules;
+      return sortedSchedules.filter(schedule => schedule.end >= dayjs());
     },
   },
 
@@ -94,8 +98,8 @@ export default {
       const color = colorMap.get(roomName);
       return color != null ? color : 'gray';
     },
-    formatDateTime(time) {
-      return dayjs(time).format('YYYY-MM-DD HH:mm');
+    formatDate(time) {
+      return dayjs(time).format('YYYY-MM-DD (ddd)');
     },
     formatTime(time) {
       return dayjs(time).format('HH:mm');

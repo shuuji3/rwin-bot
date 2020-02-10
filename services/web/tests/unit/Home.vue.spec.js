@@ -7,8 +7,8 @@ describe('Home.vue', () => {
     expect(wrapper.text()).toContain('ストレスフリー');
   });
 
-  it('has a button "予約する" to register schedule', () => {
+  it('has a button "登録する" to register schedule', () => {
     const wrapper = shallowMount(Home);
-    expect(wrapper.text()).toContain('予約する');
+    expect(wrapper.text()).toContain('登録する');
   });
 });
