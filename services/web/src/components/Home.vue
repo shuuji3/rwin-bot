@@ -24,22 +24,21 @@
 
       <v-col class="mb-5" cols="12">
         <h2 class="headline font-weight-bold mb-3">
-          次の予定は？
+          今後の予定は？
         </h2>
 
         <v-data-table
           :headers="headers"
-          :items="schedules"
+          :items="schedulesSortByStart"
           class="elevation-1"
-          :items-per-page="20"
         >
           <template v-slot:item.roomName="{ item }">
-            <v-chip :color="getColor(item.roomName)" dark>{{
+            <v-chip :color="getColor(item.roomName)" dark class="room-chip">{{
               item.roomName
             }}</v-chip>
           </template>
           <template v-slot:item.start="{ item }">
-            {{ formatTime(item.start) }}
+            {{ formatDateTime(item.start) }}
           </template>
           <template v-slot:item.end="{ item }">
             {{ formatTime(item.end) }}
@@ -50,10 +49,15 @@
   </v-container>
 </template>
 
+<style scoped>
+  .room-chip {
+    max-width: 10em;
+  }
+</style>
+
 <script>
 import axios from 'axios';
 import dayjs from 'dayjs';
-// import schedules from './dummySchedules';
 
 export default {
   name: 'Home',
@@ -69,6 +73,16 @@ export default {
     schedules: [],
   }),
 
+  computed: {
+    schedulesSortByStart() {
+      const sortedSchedules = this.schedules.slice();
+      sortedSchedules.sort(
+        (schedule1, schedule2) => schedule1.start - schedule2.start
+      );
+      return sortedSchedules;
+    },
+  },
+
   methods: {
     getColor(roomName) {
       const colorMap = new Map([
@@ -80,18 +94,29 @@ export default {
       const color = colorMap.get(roomName);
       return color != null ? color : 'gray';
     },
+    formatDateTime(time) {
+      return dayjs(time).format('YYYY-MM-DD HH:mm');
+    },
     formatTime(time) {
-      return dayjs(time, { timeZone: 'Asia/Tokyo' }).format('YYYY-MM-DD HH:mm');
+      return dayjs(time).format('HH:mm');
     },
   },
 
   async mounted() {
-    const { data } = await axios.get(
+    const { data: schedules } = await axios.get(
       'http://localhost:8010/proxy/api/schedules'
     );
-    this.schedules = data;
+    schedules.forEach(schedule => {
+      schedule.start = dayjs(schedule.start)
+        .subtract(9, 'hour')
+        .toDate();
+      schedule.end = dayjs(schedule.end)
+        .subtract(9, 'hour')
+        .toDate();
+    });
+    this.schedules = schedules;
 
-    // TODO: fix
+    // TODO: fix CORs problem
     // this.schedules = await axios.get('http://localhost:3000/api/schedules', {
     //   headers: { 'Access-Control-Allow-Origin': '*' },
     // });
