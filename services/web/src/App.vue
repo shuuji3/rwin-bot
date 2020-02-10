@@ -10,9 +10,9 @@
           transition="scale-transition"
           width="40"
         />
-        <v-toolbar-title class="ml-2 display-1 font-weight-bold"
-          ><a href="https://google.com">Rwin-bot</a></v-toolbar-title
-        >
+        <v-toolbar-title class="ml-2 display-1 font-weight-bold">
+          <router-link to="/">Rwin-bot</router-link>
+        </v-toolbar-title>
       </div>
 
       <v-spacer></v-spacer>
@@ -30,9 +30,10 @@
 </template>
 
 <style scoped>
-  a {
-    text-decoration: none;
-  }
+a {
+  color: white !important;
+  text-decoration: none;
+}
 </style>
 
 <script>
