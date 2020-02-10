@@ -27,23 +27,35 @@
           今後の予定は？
         </h2>
 
-        <v-data-table
-          :headers="headers"
-          :items="recentSchedules"
-          class="elevation-1"
-        >
-          <template v-slot:item.roomName="{ item }">
-            <v-chip :color="getColor(item.roomName)" dark class="room-chip">{{
-              item.roomName
-            }}</v-chip>
-          </template>
-          <template v-slot:item.date="{ item }">
-            {{ formatDate(item.start) }}
-          </template>
-          <template v-slot:item.time="{ item }">
-            {{ formatTime(item.start) }} - {{ formatTime(item.end) }}
-          </template>
-        </v-data-table>
+        <v-card>
+          <v-card-title>
+            <v-text-field
+              v-model="search"
+              prepend-icon="mdi-magnify"
+              label="キーワード検索"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-card-title>
+          <v-data-table
+            :headers="headers"
+            :items="recentSchedules"
+            :search="search"
+            class="elevation-1"
+          >
+            <template v-slot:item.roomName="{ item }">
+              <v-chip :color="getColor(item.roomName)" dark class="room-chip">{{
+                item.roomName
+              }}</v-chip>
+            </template>
+            <template v-slot:item.date="{ item }">
+              {{ formatDate(item.start) }}
+            </template>
+            <template v-slot:item.time="{ item }">
+              {{ formatTime(item.start) }} - {{ formatTime(item.end) }}
+            </template>
+          </v-data-table>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -74,6 +86,7 @@ export default {
       { text: '予約者', value: 'author' },
     ],
     schedules: [],
+    search: '',
   }),
 
   computed: {
