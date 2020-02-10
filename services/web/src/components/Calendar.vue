@@ -65,10 +65,9 @@
           hide-weekends
           hide-view-selector
           today-button
-          :time-step="30"
           :time-from="9 * 60"
           :time-to="21 * 60"
-          :timeCellHeight="30"
+          :timeCellHeight="60"
           :sticky-split-labels="true"
           :split-days="rooms"
           :events="events"
