@@ -193,6 +193,7 @@
         </v-form>
       </v-col>
       <v-col cols="10">
+        <!-- メインのカレンダー -->
         <vue-cal
           style="height: 100%"
           class="vuecal--blue-theme"
@@ -208,7 +209,8 @@
           :sticky-split-labels="true"
           :split-days="splitDays"
           :events="events"
-          :on-event-click="onEventClick"
+          :on-event-click="onClickSchedule"
+          @cell-click="onClickCell"
           :selected-date="selectedDate"
         >
           <!-- today button -->
@@ -315,6 +317,13 @@ export default {
       ['会議室B', { label: '会議室B', class: 'ccs-b', split: 3 }],
       ['会議室C', { label: '会議室C', class: 'ccs-c', split: 4 }],
     ]),
+    // TODO: refactor and generalize room objects
+    roomSplitToRoomNameMap: new Map([
+      [1, 'ワークショップ室'],
+      [2, '会議室A'],
+      [3, '会議室B'],
+      [4, '会議室C'],
+    ]),
   }),
 
   computed: {
@@ -332,9 +341,17 @@ export default {
 
   methods: {
     /**
+     * ミニカレンダーで日付をクリックしたときに発火するイベント。
+     * @param {Date} date クリックした日付。
+     */
+    onClickDateMiniCalendar(date) {
+      this.selectedDate = date;
+    },
+
+    /**
      * スケジュールのクリックハンドラ。ダイアログをオープンする
      */
-    onEventClick(event, e) {
+    onClickSchedule(event, e) {
       this.selectedEvent = event;
       this.showDialog = true;
 
@@ -343,11 +360,18 @@ export default {
     },
 
     /**
-     * ミニカレンダーで日付をクリックしたときに発火するイベント。
-     * @param {Date} date クリックした日付。
+     * カレンダーの空きセルのクリックハンドラ。
+     * クリックしたセルの部屋と日時をフォームにフィルする。
+     * @param {{date: Date, split: string}}
      */
-    onClickDateMiniCalendar(date) {
-      this.selectedDate = date;
+    onClickCell({ date, split }) {
+      const min = dayjs(date).get('minute');
+      const start = dayjs(date).subtract(min % 10, 'minute');
+      const end = start.add(2, 'hour');
+
+      this.start = start.format('HH:mm');
+      this.end = end.format('HH:mm');
+      this.roomName = this.getRoomNameBySplit(split);
     },
 
     /**
@@ -371,7 +395,7 @@ export default {
     /**
      * 部屋の名前からvue-cal用の場所情報のオブジェクトを返す。
      * @param {string} roomName
-     * @returns {{class: string, split: number}}
+     * @return {{class: string, split: number}}
      */
     getRoom(roomName) {
       return (
@@ -380,6 +404,15 @@ export default {
           split: 0,
         }
       );
+    },
+
+    /**
+     * 部屋の名前からvue-cal用の場所情報のオブジェクトを返す。
+     * @param {string} split
+     * @return {string}
+     */
+    getRoomNameBySplit(split) {
+      return this.roomSplitToRoomNameMap.get(Number(split)) ?? '';
     },
 
     /**
@@ -399,9 +432,8 @@ export default {
      */
     registerSchedule() {
       const newSchedule = {
-        date: this.date,
-        start: this.start,
-        end: this.end,
+        start: `${this.date} ${this.start}`,
+        end: `${this.date} ${this.end}`,
         title: this.title,
         roomName: this.roomName,
         author: this.author,
