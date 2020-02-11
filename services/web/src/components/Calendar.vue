@@ -503,7 +503,7 @@ export default {
      * Rwin-botで予定を登録する。
      * TODO: implement
      */
-    registerSchedule() {
+    async registerSchedule() {
       const newSchedule = {
         start: `${this.date} ${this.start}`,
         end: `${this.date} ${this.end}`,
@@ -511,7 +511,7 @@ export default {
         roomName: this.roomName,
         author: this.author,
       };
-      console.log('registerSchedule()', newSchedule);
+      await axios.post('http://localhost:3000/proxy/api/register', newSchedule);
     },
   },
 };
