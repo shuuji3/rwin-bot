@@ -43,16 +43,21 @@
             :search="search"
             class="elevation-1"
           >
+            <!-- 部屋の列 -->
             <template v-slot:item.roomName="{ item }">
               <v-chip :color="getColor(item.roomName)" dark class="room-chip">{{
                 item.roomName
               }}</v-chip>
             </template>
+            <!-- 日付の列 -->
             <template v-slot:item.date="{ item }">
               {{ formatDate(item.start) }}
             </template>
+            <!-- 時刻の列 -->
             <template v-slot:item.time="{ item }">
-              {{ formatTime(item.start) }} - {{ formatTime(item.end) }}
+              {{ formatTime(item.start) }} - {{ formatTime(item.end) }} ({{
+                formatDuration(item.start, item.end)
+              }})
             </template>
           </v-data-table>
         </v-card>
@@ -81,11 +86,10 @@ export default {
     headers: [
       { text: '場所', value: 'roomName' },
       { text: '日付', value: 'date' },
-      { text: '時刻', value: 'time' },
+      { text: '時間', value: 'time' },
       { text: 'スケジュール', value: 'title' },
       { text: '予約者', value: 'author' },
     ],
-    schedules: [],
     search: '',
   }),
 
@@ -106,6 +110,11 @@ export default {
   },
 
   methods: {
+    /**
+     * 部屋の名前のツールチップの背景色を取得する。
+     * @param {string} roomName
+     * @return {string}
+     */
     getColor(roomName) {
       const colorMap = new Map([
         ['ワークショップ室', '#F44336'],
@@ -116,9 +125,21 @@ export default {
       const color = colorMap.get(roomName);
       return color != null ? color : 'gray';
     },
+
+    /**
+     * 日付のフォーマットを行う。
+     * @param {dayjs.Dayjs} time
+     * @return {string}
+     */
     formatDate(time) {
       return time.format('YYYY-MM-DD (ddd)');
     },
+
+    /**
+     * 時刻のフォーマットを行う。
+     * @param {dayjs.Dayjs} time
+     * @return {string}
+     */
     formatTime(time) {
       return time.format('HH:mm');
     },

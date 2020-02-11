@@ -1,39 +1,78 @@
 <style lang="scss">
 // 部屋ごとの背景
-.vuecal__cell-split.ccs-ws {
-  background-color: rgba(221, 238, 255, 0.5);
+.vuecal__cell-split {
+  &.ccs-ws {
+    background-color: rgba(221, 238, 255, 0.5);
+  }
+
+  &.ccs-a {
+    background-color: rgba(255, 232, 251, 0.5);
+  }
+
+  &.ccs-b {
+    background-color: rgba(221, 255, 239, 0.5);
+  }
+
+  &.ccs-c {
+    background-color: rgba(255, 250, 196, 0.5);
+  }
+
+  &.xyz {
+    background-color: rgba(255, 206, 178, 0.5);
+  }
+
+  .split-label {
+    color: rgba(0, 0, 0, 0.1);
+    font-size: 26px;
+  }
 }
-.vuecal__cell-split.ccs-a {
-  background-color: rgba(255, 232, 251, 0.5);
-}
-.vuecal__cell-split.ccs-b {
-  background-color: rgba(221, 255, 239, 0.5);
-}
-.vuecal__cell-split.ccs-c {
-  background-color: rgba(255, 250, 196, 0.5);
-}
-.vuecal__cell-split.xyz {
-  background-color: rgba(255, 206, 178, 0.5);
-}
-.vuecal__cell-split .split-label {
-  color: rgba(0, 0, 0, 0.1);
-  font-size: 26px;
+// 部屋の名前
+.vuecal__split-days-headers .day-split-header {
+  font-weight: bold;
 }
 
 // スケジュールのスタイル
-.vuecal__event.ccs-ws {
-  background-color: rgba(253, 156, 66, 0.9);
-  border: 1px solid rgb(233, 136, 46);
-  color: #fff;
+.vuecal__event {
+  color: white;
+  text-align: start;
+  line-height: 1.3em;
+  border: 2px solid white;
+  border-radius: 8px !important;
+  padding: 4px 8px;
+  margin: 0;
+  cursor: pointer;
+
+  &.ccs-ws {
+    background-color: rgb(106, 196, 244);
+  }
+
+  &.ccs-a {
+    background-color: rgb(216, 140, 205);
+  }
+
+  &.ccs-b {
+    background-color: rgb(143, 220, 65);
+  }
+
+  &.ccs-c {
+    background-color: rgb(255, 190, 40);
+  }
 }
-.vuecal__event.ccs-a {
-  background-color: rgba(164, 230, 210, 0.9);
-  border: 1px solid rgb(144, 210, 190);
+
+// スケジュールのタイトル
+.vuecal__event-title {
+  font-weight: bold;
 }
-.vuecal__event.ccs-c {
-  background-color: rgba(255, 102, 102, 0.9);
-  border: 1px solid rgb(235, 82, 82);
-  color: #fff;
+
+// 今日の日付
+.vuecal--xsmall {
+  .vuecal__cell.today {
+    border: 4px solid rgba(3, 169, 244, 1) !important;
+    padding: -4px;
+  }
+  .vuecal__cell.selected {
+    background-color: rgba(3, 169, 244, 0.4) !important;
+  }
 }
 </style>
 
@@ -41,18 +80,25 @@
   <v-container fluid>
     <v-row class="text-center">
       <v-col cols="2">
+        <!-- 月表示のミニカレンダー -->
         <vue-cal
           xsmall
           style="height: 300px;"
-          class="vuecal--blue-theme"
+          class="vuecal--blue-theme mb-5"
           locale="ja"
           :time="false"
           default-view="month"
           :disable-views="['years', 'year', 'week', 'day']"
           hide-view-selector
+          today-button
           @cell-click="onClickDateMiniCalendar"
+          :selected-date="selectedDate"
         >
           >
+          <!-- today button -->
+          <template v-slot:today-button>
+            <v-icon class="mr-3">mdi-calendar-today</v-icon>
+          </template>
         </vue-cal>
       </v-col>
       <v-col cols="10">
@@ -65,50 +111,65 @@
           hide-weekends
           hide-view-selector
           today-button
-          :time-from="9 * 60"
+          :time-from="8 * 60"
           :time-to="21 * 60"
-          :timeCellHeight="60"
+          :timeCellHeight="80"
           :sticky-split-labels="true"
-          :split-days="rooms"
+          :split-days="splitDays"
           :events="events"
           :on-event-click="onEventClick"
           :selected-date="selectedDate"
         >
-          >
+          <!-- today button -->
           <template v-slot:today-button>
-            <span class="mr-3" style="font-size: 0.8em;">Today</span>
+            <v-icon class="mr-3">mdi-calendar-today</v-icon>
+          </template>
+          >
+          <!-- スケジュールのレンダリング -->
+          <template v-slot:event-renderer="{ event }">
+            <div class="vuecal__event-title" v-html="event.title" />
+            <div class="vuecal__event-time" v-if="!isShortEvent(event)">
+              <v-icon color="white" small>mdi-clock-outline</v-icon>
+              {{ event.startDate.format('HH:mm') }} -
+              {{ event.endDate.format('HH:mm') }}
+            </div>
+            <div class="vuecal__event-content" v-if="!isShortEvent(event)">
+              <v-icon color="white" small>mdi-account-outline</v-icon>
+              {{ event.content }}
+            </div>
           </template>
         </vue-cal>
 
         <!-- イベントクリック時に表示するダイアログ -->
-        <v-dialog v-model="showDialog">
+        <v-dialog v-model="showDialog" width="600px">
           <v-card>
             <v-card-title>
               <v-icon>{{ selectedEvent.icon }}</v-icon>
               <span>{{ selectedEvent.title }}</span>
               <v-spacer />
-              <strong>{{
-                selectedEvent.startDate &&
-                  selectedEvent.startDate.format('YYYY-MM-DD')
-              }}</strong>
+              <strong
+                >{{
+                  selectedEvent.startDate &&
+                    selectedEvent.startDate.format('YYYY-MM-DD (ddd)')
+                }}
+                {{
+                  selectedEvent.startDate &&
+                    selectedEvent.startDate.formatTime()
+                }}
+                -
+                {{
+                  selectedEvent.startDate && selectedEvent.endDate.formatTime()
+                }}</strong
+              >
             </v-card-title>
             <v-card-text>
-              <p v-html="selectedEvent.contentFull" />
-              <strong>Event details:</strong>
               <ul>
                 <li>
-                  Event starts at:
-                  {{
-                    selectedEvent.startDate &&
-                      selectedEvent.startDate.formatTime()
-                  }}
+                  <strong>場所:</strong> {{ selectedEvent.roomTypeName }} /
+                  {{ selectedEvent.buildingName }} /
+                  {{ selectedEvent.roomName }}
                 </li>
-                <li>
-                  Event ends at:
-                  {{
-                    selectedEvent.endDate && selectedEvent.endDate.formatTime()
-                  }}
-                </li>
+                <li><strong>予約者:</strong> {{ selectedEvent.content }}</li>
               </ul>
             </v-card-text>
           </v-card>
@@ -161,6 +222,9 @@ export default {
   },
 
   methods: {
+    /**
+     * スケジュールのクリックハンドラ。ダイアログをオープンする
+     */
     onEventClick(event, e) {
       this.selectedEvent = event;
       this.showDialog = true;
