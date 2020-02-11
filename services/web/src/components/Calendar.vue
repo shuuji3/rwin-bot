@@ -68,7 +68,7 @@
 
 // 現在時刻の線の左に●を置く
 .vuecal__now-line:before {
-  top: -5px;
+  top: -6px;
   border: none;
   width: 11px;
   height: 11px;
