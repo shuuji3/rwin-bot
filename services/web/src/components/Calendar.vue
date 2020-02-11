@@ -142,17 +142,11 @@
                       label="開始時刻"
                       prepend-icon="mdi-clock-outline"
                       type="time"
+                      step="600"
                       :rules="[
-                        v => !!v || '必須項目です',
-                        time => {
-                          if (time == null) {
-                            return '必須項目です';
-                          }
-                          const [hour, min] = time.split(':');
-                          return (
-                            min % 10 === 0 || '時刻は10分単位で指定してください'
-                          );
-                        },
+                        rules.required,
+                        rules.timeUnit10Min,
+                        rules.startBeforeEnd,
                       ]"
                       required
                     ></v-text-field>
@@ -163,17 +157,11 @@
                       v-model="end"
                       label="終了時刻"
                       type="time"
+                      step="600"
                       :rules="[
-                        v => !!v || '必須項目です',
-                        time => {
-                          if (time == null) {
-                            return '必須項目です';
-                          }
-                          const [hour, min] = time.split(':');
-                          return (
-                            min % 10 === 0 || '時刻は10分単位で指定してください'
-                          );
-                        },
+                        rules.required,
+                        rules.timeUnit10Min,
+                        rules.endAfterStart,
                       ]"
                       required
                     ></v-text-field>
@@ -182,21 +170,21 @@
                 <v-select
                   v-model="roomName"
                   :items="rooms.map(room => room.roomName)"
-                  :rules="[v => !!v || '必須項目です']"
+                  :rules="[rules.required]"
                   label="場所"
                   prepend-icon="mdi-map-marker-outline"
                   required
                 ></v-select>
                 <v-text-field
                   v-model="title"
-                  :rules="[v => !!v || '必須項目です']"
+                  :rules="[rules.required]"
                   label="予定のタイトル"
                   prepend-icon="mdi-text"
                   required
                 ></v-text-field>
                 <v-text-field
                   v-model="author"
-                  :rules="[v => !!v || '必須項目です']"
+                  :rules="[rules.required]"
                   label="予約者"
                   prepend-icon="mdi-account-outline"
                   required
@@ -231,6 +219,9 @@
                 </li>
                 <li>
                   カレンダーの空欄をクリック/タップすると、選択した場所と時間が入力されるよ。
+                </li>
+                <li>
+                  時刻の「分」は<code>↑</code>/<code>↓</code>キーを使うと10分刻みで増減できるよ。
                 </li>
               </ul>
             </v-expansion-panel-content>
@@ -381,6 +372,38 @@ export default {
     },
     date() {
       return dayjs(this.selectedDate).format('YYYY-MM-DD');
+    },
+    rules() {
+      return {
+        required: v => !!v || '必須項目です',
+        timeUnit10Min: time => {
+          if (time == null) {
+            return '必須項目です';
+          }
+          const [, min] = time.split(':');
+          return min % 10 === 0 || '時刻は10分単位で指定してください';
+        },
+        startBeforeEnd: startTime => {
+          if (!this.date || !this.end) {
+            return true;
+          }
+          return (
+            dayjs(`${this.date} ${this.end}`) -
+              dayjs(`${this.date} ${startTime}`) >
+              0 || '開始時刻は終了時刻より前でなければなりません'
+          );
+        },
+        endAfterStart: endTime => {
+          if (!this.date || !this.start) {
+            return true;
+          }
+          return (
+            dayjs(`${this.date} ${endTime}`) -
+              dayjs(`${this.date} ${this.start}`) >
+              0 || '終了時刻は開始時刻より後でなければなりません'
+          );
+        },
+      };
     },
   },
 
