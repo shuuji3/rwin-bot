@@ -77,10 +77,12 @@
 }
 
 // 詳細ダイアログボックスのリスト
-.v-application ul,
-.v-application ol {
-  padding-left: 0 !important;
-  list-style: none;
+.v-dialog .v-card {
+  ul,
+  ol {
+    padding-left: 0 !important;
+    list-style: none;
+  }
 }
 </style>
 
@@ -113,16 +115,20 @@
           :value="
             ['sm', 'xs'].includes(this.$vuetify.breakpoint.name) ? null : 0
           "
+          class="mb-5"
         >
           <v-expansion-panel>
             <v-expansion-panel-header>
-              新規スケジュールの登録
+              <span>
+                <v-icon class="mr-3">mdi-calendar-arrow-right</v-icon>
+                新規スケジュールの登録
+              </span>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-form ref="form" v-model="valid">
                 <v-text-field
                   v-model="date"
-                  label="日付 (↑のミニカレンダーで選択)"
+                  label="日付"
                   prepend-icon="mdi-calendar"
                   disabled
                   required
@@ -205,6 +211,27 @@
                   スケジュールを登録
                 </v-btn>
               </v-form>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+        <!-- ユーザー向けヒント -->
+        <v-expansion-panels class="text-left">
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              <span>
+                <v-icon class="mr-2">mdi-lightbulb-on-outline</v-icon>
+                スケジュール登録のヒント
+              </span>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <ul>
+                <li>
+                  日付を入力するには、ミニカレンダーの日付をクリック/タップしてね。
+                </li>
+                <li>
+                  カレンダーの空欄をクリック/タップすると、選択した場所と時間が入力されるよ。
+                </li>
+              </ul>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
