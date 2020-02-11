@@ -119,7 +119,10 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import VueCal from 'vue-cal';
+import dayjs from 'dayjs';
+
 import 'vue-cal/dist/vuecal.css';
 import 'vue-cal/dist/i18n/ja.js';
 
@@ -132,38 +135,30 @@ export default {
     selectedDate: new Date(),
     selectedEvent: {},
     showDialog: false,
-    rooms: [
-      { class: 'ccs-ws', label: 'ワークショップ室' },
-      { class: 'ccs-a', label: '会議室A' },
-      { class: 'ccs-b', label: '会議室B' },
-      { class: 'ccs-c', label: '会議室C' },
-    ],
-    events: [
-      {
-        start: '2020-02-10 14:00',
-        end: '2020-02-10 16:00',
-        title: 'Need to go shopping',
-        content: 'Click to see my shopping list',
-        class: 'ccs-c',
-        split: 4,
-        icon: 'mdi-cart-outline', // Custom attribute.
-        contentFull:
-          'My shopping list is rather long:<br><ul><li>Avocadoes</li><li>Tomatoes</li><li>Potatoes</li><li>Mangoes</li></ul>', // Custom attribute.
-      },
-      {
-        start: '2020-02-10 12:00',
-        end: '2020-02-10 18:00',
-        title: 'Golf with John',
-        content: 'Do I need to tell how many holes?',
-        class: 'ccs-ws',
-        split: 1,
-        icon: 'mdi-golf', // Custom attribute.
-        contentFull: 'Okay.<br>It will be a 18 hole golf course.', // Custom attribute.
-      },
-    ],
+    // TODO: refactor and generalize room objects
+    roomNameToRoomMap: new Map([
+      [
+        'ワークショップ室',
+        { label: 'ワークショップ室', class: 'ccs-ws', split: 1 },
+      ],
+      ['会議室A', { label: '会議室A', class: 'ccs-a', split: 2 }],
+      ['会議室B', { label: '会議室B', class: 'ccs-b', split: 3 }],
+      ['会議室C', { label: '会議室C', class: 'ccs-c', split: 4 }],
+    ]),
   }),
 
-  computed: {},
+  computed: {
+    ...mapState(['rooms', 'schedules']),
+    splitDays() {
+      return [...this.roomNameToRoomMap.values()];
+    },
+    events() {
+      return this.schedules.map(this.convertRwinBotSchedule);
+    },
+    date() {
+      return dayjs(this.selectedDate).format('YYYY-MM-DD');
+    },
+  },
 
   methods: {
     onEventClick(event, e) {
@@ -180,6 +175,65 @@ export default {
      */
     onClickDateMiniCalendar(date) {
       this.selectedDate = date;
+    },
+
+    /**
+     * rwin-botがデータベースに保存している形式のスケジュールのオブジェクトを、vue-calの形式に変換する
+     */
+    convertRwinBotSchedule(rwinBotSchedule) {
+      const room = this.getRoom(rwinBotSchedule.roomName);
+      return {
+        start: rwinBotSchedule.start.format('YYYY-MM-DD HH:mm'),
+        end: rwinBotSchedule.end.format('YYYY-MM-DD HH:mm'),
+        title: rwinBotSchedule.title,
+        content: `${rwinBotSchedule.author}`,
+        class: room.class,
+        split: room.split,
+        roomTypeName: rwinBotSchedule.roomTypeName,
+        buildingName: rwinBotSchedule.buildingName,
+        roomName: rwinBotSchedule.roomName,
+      };
+    },
+
+    /**
+     * 部屋の名前からvue-cal用の場所情報のオブジェクトを返す。
+     * @param {string} roomName
+     * @returns {{class: string, split: number}}
+     */
+    getRoom(roomName) {
+      return (
+        this.roomNameToRoomMap.get(roomName) ?? {
+          class: '',
+          split: 0,
+        }
+      );
+    },
+
+    /**
+     * イベントの時間が短いかどうかを判定する述語関数。1時間未満の場合はtrueを返す。
+     * @param {object} vueCalEvent
+     * @return {boolean}
+     */
+    isShortEvent(vueCalEvent) {
+      const duration =
+        vueCalEvent.endTimeMinutes - vueCalEvent.startTimeMinutes;
+      return duration < 60;
+    },
+
+    /**
+     * Rwin-botで予定を登録する。
+     * TODO: implement
+     */
+    registerSchedule() {
+      const newSchedule = {
+        date: this.date,
+        start: this.start,
+        end: this.end,
+        title: this.title,
+        roomName: this.roomName,
+        author: this.author,
+      };
+      console.log('registerSchedule()', newSchedule);
     },
   },
 };

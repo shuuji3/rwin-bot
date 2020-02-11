@@ -68,9 +68,9 @@
 </style>
 
 <script>
-import axios from 'axios';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
+import { mapState } from 'vuex';
 
 dayjs.locale('ja');
 
@@ -90,6 +90,8 @@ export default {
   }),
 
   computed: {
+    ...mapState(['schedules']),
+
     /**
      * 予定が早い順に今後の予定リストを取得する。
      * @return {object[]}
@@ -115,31 +117,24 @@ export default {
       return color != null ? color : 'gray';
     },
     formatDate(time) {
-      return dayjs(time).format('YYYY-MM-DD (ddd)');
+      return time.format('YYYY-MM-DD (ddd)');
     },
     formatTime(time) {
-      return dayjs(time).format('HH:mm');
+      return time.format('HH:mm');
     },
-  },
 
-  async mounted() {
-    const { data: schedules } = await axios.get(
-      'http://localhost:8010/proxy/api/schedules'
-    );
-    schedules.forEach(schedule => {
-      schedule.start = dayjs(schedule.start)
-        .subtract(9, 'hour')
-        .toDate();
-      schedule.end = dayjs(schedule.end)
-        .subtract(9, 'hour')
-        .toDate();
-    });
-    this.schedules = schedules;
-
-    // TODO: fix CORs problem
-    // this.schedules = await axios.get('http://localhost:3000/api/schedules', {
-    //   headers: { 'Access-Control-Allow-Origin': '*' },
-    // });
+    /**
+     * 開始時刻から終了時刻までの時間のフォーマットを行う。
+     * @param {dayjs.Dayjs} start
+     * @param {dayjs.Dayjs} end
+     * @return {string}
+     */
+    formatDuration(start, end) {
+      const durationInMinutes = (end - start) / 1000 / 60;
+      const hour = String(Math.floor(durationInMinutes / 60));
+      const min = String(durationInMinutes % 60).padStart(2, '0');
+      return `${hour}:${min}`;
+    },
   },
 };
 </script>

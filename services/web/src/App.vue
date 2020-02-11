@@ -37,11 +37,20 @@ a {
 </style>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   name: 'App',
   components: {},
   data: () => ({
     //
   }),
+  async mounted() {
+    this.getRooms();
+    this.getSchedules();
+  },
+  methods: {
+    ...mapActions(['getRooms', 'getSchedules']),
+  },
 };
 </script>
