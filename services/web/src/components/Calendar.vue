@@ -66,12 +66,8 @@
 
 // 今日の日付
 .vuecal--xsmall {
-  .vuecal__cell.today {
-    border: 4px solid rgba(3, 169, 244, 1) !important;
-    padding: -4px;
-  }
-  .vuecal__cell.selected {
-    background-color: rgba(3, 169, 244, 0.4) !important;
+  .selected .vuecal__cell-content {
+    border-width: 3px;
   }
 }
 
@@ -101,7 +97,7 @@
         <vue-cal
           xsmall
           style="height: 300px;"
-          class="vuecal--blue-theme mb-5"
+          class="vuecal--blue-theme vuecal--rounded-theme mb-5"
           locale="ja"
           :time="false"
           default-view="month"
