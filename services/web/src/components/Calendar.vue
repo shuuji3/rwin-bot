@@ -74,6 +74,23 @@
     background-color: rgba(3, 169, 244, 0.4) !important;
   }
 }
+
+// 現在時刻の線の左に●を置く
+.vuecal__now-line:before {
+  top: -5px;
+  border: none;
+  width: 11px;
+  height: 11px;
+  background: red;
+  border-radius: 50%;
+}
+
+// 詳細ダイアログボックスのリスト
+.v-application ul,
+.v-application ol {
+  padding-left: 0 !important;
+  list-style: none;
+}
 </style>
 
 <template>
