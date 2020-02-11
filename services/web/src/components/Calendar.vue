@@ -317,9 +317,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import VueCal from 'vue-cal';
 import dayjs from 'dayjs';
+import VueCal from 'vue-cal';
+import { mapState } from 'vuex';
 
 import 'vue-cal/dist/vuecal.css';
 import 'vue-cal/dist/i18n/ja.js';
