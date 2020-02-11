@@ -85,6 +85,11 @@
     list-style: none;
   }
 }
+
+// 時間の罫線を濃い青にする
+.vuecal__time-column .vuecal__time-cell .line:before {
+  border-top: 1px solid rgba(100, 149, 237, 0.6);
+}
 </style>
 
 <template>

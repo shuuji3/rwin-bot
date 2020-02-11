@@ -17,7 +17,12 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn href="https://github.com/shuuji3/rwin-bot" target="_blank" text x-large>
+      <v-btn
+        href="https://github.com/shuuji3/rwin-bot"
+        target="_blank"
+        text
+        x-large
+      >
         <v-icon>mdi-github-circle</v-icon>
         <span class="ml-2 text-capitalize">GitHub</span>
       </v-btn>
