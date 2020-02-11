@@ -1,11 +1,11 @@
 version: '3.7'
 services:
-  save-schedules:
+  bot:
     build:
-      context: ./services/save-schedules/
+      context: ./services/bot/
     volumes:
       - type: bind
-        source: $PWD/services/save-schedules/
+        source: $PWD/services/bot/
         target: /app/
       - type: volume
         source: db
