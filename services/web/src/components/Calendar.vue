@@ -87,7 +87,7 @@
 <template>
   <v-container fluid>
     <v-row class="text-center">
-      <v-col :lg="2" cols="12">
+      <v-col :lg="3" :md="3" cols="12">
         <!-- 月表示のミニカレンダー -->
         <vue-cal
           xsmall
@@ -109,90 +109,107 @@
           </template>
         </vue-cal>
         <!-- 新規スケジュールの登録 -->
-        <v-form ref="form" v-model="valid">
-          <v-text-field
-            v-model="date"
-            label="日付 (↑のミニカレンダーで選択)"
-            prepend-icon="mdi-calendar"
-            disabled
-            required
-          ></v-text-field>
-          <v-row>
-            <!-- 開始時刻 -->
-            <v-col cols="7" class="py-0">
-              <v-text-field
-                v-model="start"
-                label="開始時刻"
-                prepend-icon="mdi-clock-outline"
-                type="time"
-                :rules="[
-                  v => !!v || '必須項目です',
-                  time => {
-                    if (time == null) {
-                      return '必須項目です';
-                    }
-                    const [hour, min] = time.split(':');
-                    return min % 10 === 0 || '時刻は10分単位で指定してください';
-                  },
-                ]"
-                required
-              ></v-text-field>
-            </v-col>
-            <!-- 終了時刻 -->
-            <v-col class="py-0">
-              <v-text-field
-                v-model="end"
-                label="終了時刻"
-                type="time"
-                :rules="[
-                  v => !!v || '必須項目です',
-                  time => {
-                    if (time == null) {
-                      return '必須項目です';
-                    }
-                    const [hour, min] = time.split(':');
-                    return min % 10 === 0 || '時刻は10分単位で指定してください';
-                  },
-                ]"
-                required
-              ></v-text-field>
-            </v-col>
-          </v-row>
-          <v-select
-            v-model="roomName"
-            :items="rooms.map(room => room.roomName)"
-            :rules="[v => !!v || '必須項目です']"
-            label="場所"
-            prepend-icon="mdi-map-marker-outline"
-            required
-          ></v-select>
-          <v-text-field
-            v-model="title"
-            :rules="[v => !!v || '必須項目です']"
-            label="予定のタイトル"
-            prepend-icon="mdi-text"
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="author"
-            :rules="[v => !!v || '必須項目です']"
-            label="予約者"
-            prepend-icon="mdi-account-outline"
-            required
-          ></v-text-field>
-          <v-btn
-            :disabled="!valid"
-            color="error"
-            class="mr-4"
-            @click="registerSchedule"
-            large
-          >
-            <v-icon class="mr-3">mdi-calendar-arrow-right</v-icon>
-            スケジュールを登録
-          </v-btn>
-        </v-form>
+        <v-expansion-panels
+          :value="
+            ['sm', 'xs'].includes(this.$vuetify.breakpoint.name) ? null : 0
+          "
+        >
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              新規スケジュールの登録
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-form ref="form" v-model="valid">
+                <v-text-field
+                  v-model="date"
+                  label="日付 (↑のミニカレンダーで選択)"
+                  prepend-icon="mdi-calendar"
+                  disabled
+                  required
+                ></v-text-field>
+                <v-row>
+                  <!-- 開始時刻 -->
+                  <v-col cols="7" class="py-0">
+                    <v-text-field
+                      v-model="start"
+                      label="開始時刻"
+                      prepend-icon="mdi-clock-outline"
+                      type="time"
+                      :rules="[
+                        v => !!v || '必須項目です',
+                        time => {
+                          if (time == null) {
+                            return '必須項目です';
+                          }
+                          const [hour, min] = time.split(':');
+                          return (
+                            min % 10 === 0 || '時刻は10分単位で指定してください'
+                          );
+                        },
+                      ]"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <!-- 終了時刻 -->
+                  <v-col class="py-0">
+                    <v-text-field
+                      v-model="end"
+                      label="終了時刻"
+                      type="time"
+                      :rules="[
+                        v => !!v || '必須項目です',
+                        time => {
+                          if (time == null) {
+                            return '必須項目です';
+                          }
+                          const [hour, min] = time.split(':');
+                          return (
+                            min % 10 === 0 || '時刻は10分単位で指定してください'
+                          );
+                        },
+                      ]"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-select
+                  v-model="roomName"
+                  :items="rooms.map(room => room.roomName)"
+                  :rules="[v => !!v || '必須項目です']"
+                  label="場所"
+                  prepend-icon="mdi-map-marker-outline"
+                  required
+                ></v-select>
+                <v-text-field
+                  v-model="title"
+                  :rules="[v => !!v || '必須項目です']"
+                  label="予定のタイトル"
+                  prepend-icon="mdi-text"
+                  required
+                ></v-text-field>
+                <v-text-field
+                  v-model="author"
+                  :rules="[v => !!v || '必須項目です']"
+                  label="予約者"
+                  prepend-icon="mdi-account-outline"
+                  required
+                ></v-text-field>
+                <v-btn
+                  :disabled="!valid"
+                  color="error"
+                  class="mr-4"
+                  @click="registerSchedule"
+                  large
+                >
+                  <v-icon class="mr-3">mdi-calendar-arrow-right</v-icon>
+                  スケジュールを登録
+                </v-btn>
+              </v-form>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-col>
-      <v-col :lg="10" cols="12">
+      <v-col :lg="9" :md="9" cols="12">
         <!-- メインのカレンダー -->
         <vue-cal
           style="height: 100%"
