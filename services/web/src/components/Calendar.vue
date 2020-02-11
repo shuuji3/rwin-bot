@@ -59,11 +59,6 @@
   }
 }
 
-// スケジュールのタイトル
-.vuecal__event-title {
-  font-weight: bold;
-}
-
 // 今日の日付
 .vuecal--xsmall {
   .selected .vuecal__cell-content {
@@ -209,7 +204,7 @@
           today-button
           :time-from="8 * 60"
           :time-to="21 * 60"
-          :timeCellHeight="80"
+          :timeCellHeight="70"
           :sticky-split-labels="true"
           :split-days="splitDays"
           :events="events"
@@ -223,7 +218,10 @@
           >
           <!-- スケジュールのレンダリング -->
           <template v-slot:event-renderer="{ event }">
-            <div class="vuecal__event-title" v-html="event.title" />
+            <div
+              class="vuecal__event-title font-weight-bold"
+              v-html="event.title"
+            />
             <div class="vuecal__event-time" v-if="!isShortEvent(event)">
               <v-icon color="white" small>mdi-clock-outline</v-icon>
               {{ event.startDate.format('HH:mm') }} -
