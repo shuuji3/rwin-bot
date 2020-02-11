@@ -87,7 +87,7 @@
 <template>
   <v-container fluid>
     <v-row class="text-center">
-      <v-col cols="2">
+      <v-col :lg="2" cols="12">
         <!-- 月表示のミニカレンダー -->
         <vue-cal
           xsmall
@@ -192,7 +192,7 @@
           </v-btn>
         </v-form>
       </v-col>
-      <v-col cols="10">
+      <v-col :lg="10" cols="12">
         <!-- メインのカレンダー -->
         <vue-cal
           style="height: 100%"
