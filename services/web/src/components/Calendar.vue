@@ -238,32 +238,37 @@
         <v-dialog v-model="showDialog" width="600px">
           <v-card>
             <v-card-title>
-              <v-icon>{{ selectedEvent.icon }}</v-icon>
-              <span>{{ selectedEvent.title }}</span>
-              <v-spacer />
-              <strong
-                >{{
-                  selectedEvent.startDate &&
-                    selectedEvent.startDate.format('YYYY-MM-DD (ddd)')
-                }}
-                {{
-                  selectedEvent.startDate &&
-                    selectedEvent.startDate.formatTime()
-                }}
-                -
-                {{
-                  selectedEvent.startDate && selectedEvent.endDate.formatTime()
-                }}</strong
-              >
+              <strong>{{ selectedEvent.title }}</strong>
             </v-card-title>
             <v-card-text>
               <ul>
                 <li>
+                  <v-icon class="mr-2">mdi-clock-outline</v-icon>
+                  <strong>時間:</strong>
+                  {{
+                    selectedEvent.startDate &&
+                      selectedEvent.startDate.format('YYYY-MM-DD (ddd)')
+                  }}
+                  {{
+                    selectedEvent.startDate &&
+                      selectedEvent.startDate.formatTime()
+                  }}
+                  -
+                  {{
+                    selectedEvent.startDate &&
+                      selectedEvent.endDate.formatTime()
+                  }}
+                </li>
+                <li>
+                  <v-icon class="mr-2">mdi-map-marker-outline</v-icon>
                   <strong>場所:</strong> {{ selectedEvent.roomTypeName }} /
                   {{ selectedEvent.buildingName }} /
                   {{ selectedEvent.roomName }}
                 </li>
-                <li><strong>予約者:</strong> {{ selectedEvent.content }}</li>
+                <li>
+                  <v-icon class="mr-2">mdi-account-outline</v-icon>
+                  <strong>予約者:</strong> {{ selectedEvent.content }}
+                </li>
               </ul>
             </v-card-text>
           </v-card>
