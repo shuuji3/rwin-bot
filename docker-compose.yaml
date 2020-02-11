@@ -23,7 +23,7 @@ services:
         source: db
         target: /db/
     ports:
-    - 3000:3000
+      - 3000:3000
     command: node src/index.js
   web:
     image: nginx:alpine
@@ -33,6 +33,6 @@ services:
         target: /usr/share/nginx/html/
         read_only: true
     ports:
-    - 80:80
+      - 80:80
 volumes:
   db:
