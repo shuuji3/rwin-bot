@@ -1,6 +1,8 @@
 version: '3.7'
 services:
   bot:
+    depends_on:
+      - redis
     build:
       context: ./services/bot/
     volumes:
@@ -25,6 +27,8 @@ services:
     ports:
       - 3000:3000
     command: node src/index.js
+  redis:
+    image: redis:5-alpine
   web:
     image: nginx:alpine
     volumes:

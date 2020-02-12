@@ -3,6 +3,7 @@
     "prettier": "^1.19.1"
   },
   "dependencies": {
+    "bull": "^3.12.1",
     "dayjs": "^1.8.20",
     "knex": "^0.20.9",
     "lodash": "^4.17.15",
