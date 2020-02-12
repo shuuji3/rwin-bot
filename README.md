@@ -2,6 +2,10 @@
 
 Rwin という部屋予約システムのラッパーです。Rwin 自体をできるだけ操作せずにストレスフリーで部屋を予約できるようにするために作りました。
 
+## Architecture
+
+![rwin-bot Architecture](architecture.svg)
+
 ## Components
 
 ### bot
@@ -23,7 +27,3 @@ Express.js を使って、データベースに保存されたデータを REST 
 ### web
 
 Vue.js で作られた Web UI です。スケジュールの閲覧と新規スケジュールの登録ができます。
-
-## Architecture
-
-![rwin-bot Architecture](architecture.svg)
