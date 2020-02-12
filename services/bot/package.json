@@ -5,6 +5,7 @@
   "dependencies": {
     "bull": "^3.12.1",
     "dayjs": "^1.8.20",
+    "express": "^4.17.1",
     "knex": "^0.20.9",
     "lodash": "^4.17.15",
     "puppeteer": "^2.1.1",
