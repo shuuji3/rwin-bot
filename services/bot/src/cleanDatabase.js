@@ -10,41 +10,7 @@ const createConnection = require('./createConnection');
  */
 async function cleanDatabase() {
   const knex = createConnection();
-  await createTableIfNotExists(knex);
   await removeOldSchedulesFromToday(knex);
-}
-
-/**
- * テーブルが存在しない場合に作成する。
- *
- * Ref. スケジュールオブジェクトの例
- * {
- *   author: 'タスクフォースT',
- *   title: '戦略ミーティング',
- *   start: 2020-02-02T10:00:00.000Z,
- *   end: 2020-02-02T12:30:00.000Z,
- *   roomTypeName: '会議室',
- *   buildingName: '建物X',
- *   roomName: '会議室A'
- * }
- *
- * @param {Knex} knex
- * @return {Promise<void>}
- */
-async function createTableIfNotExists(knex) {
-  const exists = await knex.schema.hasTable('schedules');
-  if (!exists) {
-    await knex.schema.createTableIfNotExists('schedules', table => {
-      table.increments('id');
-      table.string('author');
-      table.string('title');
-      table.dateTime('start');
-      table.dateTime('end');
-      table.string('roomTypeName');
-      table.string('buildingName');
-      table.string('roomName');
-    });
-  }
 }
 
 /**
