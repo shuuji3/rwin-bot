@@ -94,12 +94,16 @@ async function makeScheduleList(
       // There is no schedule in 10 minutes, so proceed the clock
       startTime = startTime.add(10, 'minute');
     } else {
+      const reservationID = await scheduleHandle.evaluate(
+        td => Number(td.getAttribute('id').split('_')[1])
+      );
       const [author, title] = await scheduleHandle.evaluate(td =>
         td.querySelector('div').innerHTML.split('<br>')
       );
       const durationMinutes = colspan * 10;
       const endTime = startTime.add(durationMinutes, 'minute');
       schedules.push({
+        reservationID,
         author,
         title,
         start: startTime.toDate(),
