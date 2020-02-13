@@ -42,7 +42,6 @@ async function fetchSchedules() {
   const { data: schedules } = await axios.get(
     'http://localhost:8080/api/schedules'
   );
-  // });
 
   schedules.forEach(schedule => {
     schedule.start = dayjs(schedule.start).subtract(9, 'hour');
