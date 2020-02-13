@@ -5,6 +5,10 @@ import router from './router';
 import store from './store';
 import vuetify from './plugins/vuetify';
 
+import VueShortkey from 'vue-shortkey';
+
+Vue.use(VueShortkey);
+
 Vue.config.productionTip = false;
 
 new Vue({

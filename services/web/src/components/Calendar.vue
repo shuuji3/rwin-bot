@@ -93,7 +93,23 @@
 </style>
 
 <template>
-  <v-container fluid>
+  <v-container
+    fluid
+    v-shortkey="{
+      today: ['t'],
+      tomorrow: ['j'],
+      tomorrow2: ['f'],
+      tomorrow3: ['arrowright'],
+      yesterday: ['k'],
+      yesterday2: ['b'],
+      yesterday3: ['arrowleft'],
+      nextWeek: ['l'],
+      nextWeek2: ['n'],
+      previousWeek: ['h'],
+      previousWeek2: ['p'],
+    }"
+    @shortkey="onShortkey"
+  >
     <v-row class="text-center">
       <v-col :lg="3" :md="3" cols="12">
         <!-- 月表示のミニカレンダー -->
@@ -413,6 +429,28 @@ export default {
   },
 
   methods: {
+    /**
+     * ショートカットキーのイベントハンドラ。
+     */
+    onShortkey({ srcKey }) {
+      if (srcKey === 'today') {
+        this.$refs.vuecal.switchView('day', new Date());
+      } else if (srcKey.startsWith('tomorrow')) {
+        this.$refs.vuecal.next();
+      } else if (srcKey.startsWith('yesterday')) {
+        this.$refs.vuecal.previous();
+      } else if (srcKey.startsWith('nextWeek')) {
+        for (let i = 0; i < 7; i++) {
+          this.$refs.vuecal.next();
+        }
+      } else if (srcKey.startsWith('previousWeek')) {
+        for (let i = 0; i < 7; i++) {
+          this.$refs.vuecal.previous();
+        }
+      }
+      this.selectedDate = this.$refs.vuecal.view.startDate;
+    },
+
     /**
      * ミニカレンダーで日付をクリックしたときに発火するイベント。
      * @param {Date} date クリックした日付。
