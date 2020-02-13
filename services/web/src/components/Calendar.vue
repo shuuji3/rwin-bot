@@ -131,18 +131,26 @@
           </template>
           <!-- 日付 -->
           <template v-slot:cell-content="{ cell, view }">
-            <span
-              class="vuecal__cell-date"
-              :class="[
-                view.id,
-                {
-                  holiday:
-                    isHoliday(cell.startDate) || isWeekend(cell.startDate),
-                },
-              ]"
-            >
-              {{ cell.startDate.format('D') }}
-            </span>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <span
+                  v-on="isHoliday(cell.startDate) ? on : null"
+                  class="vuecal__cell-date"
+                  :class="[
+                    view.id,
+                    {
+                      holiday:
+                        isHoliday(cell.startDate) || isWeekend(cell.startDate),
+                    },
+                  ]"
+                >
+                  {{ cell.startDate.format('D') }}
+                </span>
+              </template>
+              <span v-if="isHoliday(cell.startDate)">{{
+                getHolidayName(cell.startDate)
+              }}</span>
+            </v-tooltip>
           </template>
         </vue-cal>
         <!-- 新規スケジュールの登録 -->
@@ -277,6 +285,9 @@
                 <li>
                   <code>q</code>
                   キーを押すとショートカットキー一覧が表示されるよ。
+                </li>
+                <li>
+                  ミニカレンダーの祝日にカーソルを合わせると、祝日の名前が表示されるよ。
                 </li>
               </ul>
             </v-expansion-panel-content>
