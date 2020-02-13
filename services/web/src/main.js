@@ -7,7 +7,7 @@ import vuetify from './plugins/vuetify';
 
 import VueShortkey from 'vue-shortkey';
 
-Vue.use(VueShortkey);
+Vue.use(VueShortkey, { prevent: ['input', 'textarea'] });
 
 Vue.config.productionTip = false;
 
