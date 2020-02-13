@@ -116,7 +116,12 @@
           @cell-click="onClickDateMiniCalendar"
           :selected-date="selectedDate"
         >
-          >
+          <!-- 日付ヘッダ -->
+          <template v-slot:title="{ view }">
+            <span>
+              {{ view.startDate.format('YYYY年 M月') }}
+            </span>
+          </template>
           <!-- today button -->
           <template v-slot:today-button>
             <v-icon class="mr-3">mdi-calendar-today</v-icon>
@@ -289,13 +294,12 @@
                 holiday: isHoliday(view.startDate) || isWeekend(view.startDate),
               }"
             >
-              {{ view.startDate.format('YYYY年M月D日(ddd)') }}
+              {{ view.startDate.format('YYYY年 M月 D日 (ddd)') }}
               <template v-if="isHoliday(view.startDate)"
                 >({{ getHolidayName(view.startDate) }})</template
               >
             </span>
           </template>
-
           <!-- today button -->
           <template v-slot:today-button>
             <v-icon class="mr-3">mdi-calendar-today</v-icon>
