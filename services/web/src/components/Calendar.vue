@@ -147,7 +147,11 @@
               </span>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
-              <v-form ref="form" v-model="valid">
+              <v-form
+                ref="form"
+                v-model="valid"
+                @submit.prevent="registerSchedule"
+              >
                 <v-text-field
                   v-model="date"
                   label="日付"
@@ -211,14 +215,25 @@
                   required
                 ></v-text-field>
                 <v-btn
+                  v-if="!done"
+                  type="submit"
                   :disabled="!valid"
                   color="error"
                   class="mr-4"
-                  @click="registerSchedule"
                   large
                 >
                   <v-icon class="mr-3">mdi-calendar-arrow-right</v-icon>
                   スケジュールを登録
+                </v-btn>
+                <v-btn
+                  v-if="done"
+                  color="success"
+                  class="mr-4"
+                  large
+                  @click.prevent="resetForm"
+                >
+                  <v-icon class="mr-3">mdi-check</v-icon>
+                  登録リクエスト完了
                 </v-btn>
               </v-form>
             </v-expansion-panel-content>
@@ -252,6 +267,7 @@
       <v-col :lg="9" :md="9" cols="12">
         <!-- メインのカレンダー -->
         <vue-cal
+          ref="vuecal"
           style="height: 100%"
           class="vuecal--blue-theme"
           locale="ja"
@@ -338,6 +354,7 @@
 </template>
 
 <script>
+// import axios from 'axios';
 import dayjs from 'dayjs';
 import VueCal from 'vue-cal';
 import { mapState } from 'vuex';
@@ -353,9 +370,8 @@ export default {
   data: () => ({
     // for form
     valid: false,
-    startMenu: false,
+    done: false,
     start: null,
-    endMenu: false,
     end: null,
     title: '',
     roomName: '',
@@ -549,7 +565,19 @@ export default {
         roomName: this.roomName,
         author: this.author,
       };
-      await axios.post('http://localhost:3000/proxy/api/register', newSchedule);
+      console.log(newSchedule);
+      // await axios.post('http://localhost:3001/proxy/api/register', newSchedule);
+      this.done = true;
+    },
+
+    resetForm() {
+      this.done = false;
+      this.start = null;
+      this.end = null;
+      this.title = '';
+      this.roomName = '';
+      this.author = '';
+      this.$refs.form.resetValidation();
     },
   },
 };
