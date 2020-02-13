@@ -11,6 +11,7 @@
     "proxy": "lcp --proxyUrl http://localhost:3000"
   },
   "dependencies": {
+    "@holiday-jp/holiday_jp": "^2.2.3",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "dayjs": "^1.8.20",

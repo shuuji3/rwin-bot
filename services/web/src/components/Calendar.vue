@@ -92,6 +92,12 @@
 }
 </style>
 
+<style scoped>
+.holiday {
+  color: orangered;
+}
+</style>
+
 <template>
   <v-container fluid v-shortkey="shortkeys" @shortkey="onShortkey">
     <v-row class="text-center">
@@ -276,6 +282,20 @@
           @cell-click="onClickCell"
           :selected-date="selectedDate"
         >
+          <!-- 日付ヘッダ -->
+          <template v-slot:title="{ view }">
+            <span
+              :class="{
+                holiday: isHoliday(view.startDate) || isWeekend(view.startDate),
+              }"
+            >
+              {{ view.startDate.format('YYYY年M月D日(ddd)') }}
+              <template v-if="isHoliday(view.startDate)"
+                >({{ getHolidayName(view.startDate) }})</template
+              >
+            </span>
+          </template>
+
           <!-- today button -->
           <template v-slot:today-button>
             <v-icon class="mr-3">mdi-calendar-today</v-icon>
@@ -339,9 +359,7 @@
           </v-card>
         </v-dialog>
 
-        <shortkey-dialog
-          :show-shortkey-dialog="showShortkeyDialog"
-        />
+        <shortkey-dialog :show-shortkey-dialog="showShortkeyDialog" />
       </v-col>
     </v-row>
   </v-container>
@@ -350,6 +368,7 @@
 <script>
 // import axios from 'axios';
 import dayjs from 'dayjs';
+import holidayJp from '@holiday-jp/holiday_jp';
 import VueCal from 'vue-cal';
 import { mapState } from 'vuex';
 
@@ -358,10 +377,7 @@ import ShortkeyDialog from './ShortkeyDialog';
 import 'vue-cal/dist/vuecal.css';
 import 'vue-cal/dist/i18n/ja.js';
 
-const {
-  shortkeyHandler,
-  buildShortkeys,
-} = require('./shortkey');
+const { shortkeyHandler, buildShortkeys } = require('./shortkey');
 
 export default {
   components: { ShortkeyDialog, VueCal },
@@ -596,6 +612,37 @@ export default {
       this.roomName = '';
       this.author = '';
       this.$refs.form.resetValidation();
+    },
+
+    /**
+     * 与えられた日付が祝日かどうか判定する。
+     * @param {Date} date
+     * @return {Boolean}
+     */
+    isHoliday(date) {
+      return holidayJp.isHoliday(date);
+    },
+
+    /**
+     * 与えられた日付が土曜日またはかどうか判定する。
+     * @param {Date} date
+     * @return {Boolean}
+     */
+    isWeekend(date) {
+      const SUNDAY = 0;
+      const SATURDAY = 6;
+      const weekday = date.getDay();
+      return weekday === SUNDAY || weekday === SATURDAY;
+    },
+
+    /**
+     * 祝日の名前を取得する。
+     * @param {Date} date 祝日
+     * @return {string}
+     */
+    getHolidayName(date) {
+      const holiday = holidayJp.between(date, date);
+      return holiday ? holiday[0].name : '';
     },
   },
 };
