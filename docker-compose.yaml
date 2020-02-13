@@ -12,6 +12,8 @@ services:
       - type: volume
         source: db
         target: /db/
+    ports:
+      - 3001:3001
     env_file:
       - .env
   api-server:
