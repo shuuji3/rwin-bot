@@ -133,7 +133,7 @@
           <template v-slot:cell-content="{ cell, view }">
             <span
               class="vuecal__cell-date"
-              :class="[view.id, { holiday: isHoliday(cell.startDate) }]"
+              :class="[view.id, { holiday: isHoliday(cell.startDate) || isWeekend(cell.startDate) }]"
             >
               {{ cell.startDate.format('D') }}
             </span>
