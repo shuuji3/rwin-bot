@@ -93,23 +93,7 @@
 </style>
 
 <template>
-  <v-container
-    fluid
-    v-shortkey="{
-      today: ['t'],
-      tomorrow: ['j'],
-      tomorrow2: ['f'],
-      tomorrow3: ['arrowright'],
-      yesterday: ['k'],
-      yesterday2: ['b'],
-      yesterday3: ['arrowleft'],
-      nextWeek: ['l'],
-      nextWeek2: ['n'],
-      previousWeek: ['h'],
-      previousWeek2: ['p'],
-    }"
-    @shortkey="onShortkey"
-  >
+  <v-container fluid v-shortkey="shortkeys" @shortkey="onShortkey">
     <v-row class="text-center">
       <v-col :lg="3" :md="3" cols="12">
         <!-- 月表示のミニカレンダー -->
@@ -241,13 +225,13 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
-        <!-- ユーザー向けヒント -->
+        <!-- 使い方のヒント -->
         <v-expansion-panels class="text-left">
           <v-expansion-panel>
             <v-expansion-panel-header>
               <span>
                 <v-icon class="mr-2">mdi-lightbulb-on-outline</v-icon>
-                スケジュール登録のヒント
+                使い方のヒント
               </span>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -260,6 +244,10 @@
                 </li>
                 <li>
                   時刻の「分」は<code>↑</code>/<code>↓</code>キーを使うと10分刻みで増減できるよ。
+                </li>
+                <li>
+                  <code>q</code>
+                  キーを押すとショートカットキー一覧が表示されるよ。
                 </li>
               </ul>
             </v-expansion-panel-content>
@@ -312,7 +300,7 @@
         </vue-cal>
 
         <!-- イベントクリック時に表示するダイアログ -->
-        <v-dialog v-model="showDialog" width="600px">
+        <v-dialog v-model="showEventDialog" width="600px">
           <v-card>
             <v-card-title>
               <strong>{{ selectedEvent.title }}</strong>
@@ -350,6 +338,10 @@
             </v-card-text>
           </v-card>
         </v-dialog>
+
+        <shortkey-dialog
+          :show-shortkey-dialog="showShortkeyDialog"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -361,11 +353,18 @@ import dayjs from 'dayjs';
 import VueCal from 'vue-cal';
 import { mapState } from 'vuex';
 
+import ShortkeyDialog from './ShortkeyDialog';
+
 import 'vue-cal/dist/vuecal.css';
 import 'vue-cal/dist/i18n/ja.js';
 
+const {
+  shortkeyHandler,
+  buildShortkeys,
+} = require('./shortkey');
+
 export default {
-  components: { VueCal },
+  components: { ShortkeyDialog, VueCal },
 
   name: 'Calendar',
 
@@ -381,7 +380,8 @@ export default {
 
     selectedDate: new Date(),
     selectedEvent: {},
-    showDialog: false,
+    showEventDialog: false,
+    showShortkeyDialog: false,
     // TODO: refactor and generalize room objects
     roomNameToRoomMap: new Map([
       [
@@ -476,29 +476,17 @@ export default {
         author: this.author,
       };
     },
+    shortkeys() {
+      return buildShortkeys();
+    },
   },
 
   methods: {
     /**
      * ショートカットキーのイベントハンドラ。
      */
-    onShortkey({ srcKey }) {
-      if (srcKey === 'today') {
-        this.$refs.vuecal.switchView('day', new Date());
-      } else if (srcKey.startsWith('tomorrow')) {
-        this.$refs.vuecal.next();
-      } else if (srcKey.startsWith('yesterday')) {
-        this.$refs.vuecal.previous();
-      } else if (srcKey.startsWith('nextWeek')) {
-        for (let i = 0; i < 7; i++) {
-          this.$refs.vuecal.next();
-        }
-      } else if (srcKey.startsWith('previousWeek')) {
-        for (let i = 0; i < 7; i++) {
-          this.$refs.vuecal.previous();
-        }
-      }
-      this.selectedDate = this.$refs.vuecal.view.startDate;
+    onShortkey({ srcKey: eventName }) {
+      shortkeyHandler(eventName, this);
     },
 
     /**
@@ -514,7 +502,7 @@ export default {
      */
     onClickSchedule(event, e) {
       this.selectedEvent = event;
-      this.showDialog = true;
+      this.showEventDialog = true;
 
       // Prevent navigating to narrower view (default vue-cal behavior).
       e.stopPropagation();
