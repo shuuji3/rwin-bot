@@ -1,16 +1,19 @@
 module.exports = runRegisterSchedule;
 
 const dayjs = require('dayjs');
+const { getBrowser, login } = require('./puppeteerHelper');
 
 const BASE_URL = process.env.BASE_URL;
 
 /**
  * 新規スケジュールをRwinで登録するタスクを実行する。
- * @param {Page} page
  * @param {{roomName: string, start: string, end: string, title: string, author: string}} newSchedule
  * @return {Promise<void>}
  */
-async function runRegisterSchedule(page, newSchedule) {
+async function runRegisterSchedule({ data: newSchedule }) {
+  const browser = await getBrowser();
+  const page = await login(browser);
+
   const start = dayjs(newSchedule.start);
   const end = dayjs(newSchedule.end);
   const [year, month, day, startHour, startMinute] = start
@@ -72,6 +75,8 @@ async function runRegisterSchedule(page, newSchedule) {
     // 想定外のフローであるため、調査が必要
     console.error('予約失敗', '予期せぬフローを通りました。');
   }
+
+  await browser.close();
 }
 
 async function waitRequest(page) {

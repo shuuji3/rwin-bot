@@ -3,15 +3,18 @@ module.exports = runSaveSchedules;
 const getSchedules = require('./getSchedules');
 const saveSchedulesToDatabase = require('./saveSchedulesToDatabase');
 const cleanDatabase = require('./cleanDatabase');
+const { getBrowser, login } = require('./puppeteerHelper');
 
 const BASE_URL = process.env.BASE_URL;
 
 /**
  * データベースに今日以降のスケジュールを保存するタスクを実行する。
- * @param {Page} page
  * @return {Promise<void>}
  */
-async function runSaveSchedules(page) {
+async function runSaveSchedules() {
+  const browser = await getBrowser();
+  const page = await login(browser);
+
   await cleanDatabase();
 
   // 「施設単位」ページへ移動
@@ -46,6 +49,8 @@ async function runSaveSchedules(page) {
       }
     }
   }
+
+  await browser.close();
 }
 
 /**
@@ -96,8 +101,8 @@ async function getRoomNameToIDMap(page) {
 async function getNameToIDMapBySelector(page, optionSelector) {
   const buildingNameAndNumberList = await page.$$eval(optionSelector, options =>
     options
-    .filter(option => option.value !== '')
-    .map(option => [option.textContent.trim(), option.value])
+      .filter(option => option.value !== '')
+      .map(option => [option.textContent.trim(), option.value])
   );
   return new Map(buildingNameAndNumberList);
 }
