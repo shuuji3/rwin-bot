@@ -92,9 +92,12 @@
 }
 </style>
 
-<style scoped>
+<style lang="scss" scoped>
 .holiday {
   color: orangered;
+  &.month {
+    font-weight: bold;
+  }
 }
 </style>
 
@@ -125,6 +128,15 @@
           <!-- today button -->
           <template v-slot:today-button>
             <v-icon class="mr-3">mdi-calendar-today</v-icon>
+          </template>
+          <!-- 日付 -->
+          <template v-slot:cell-content="{ cell, view }">
+            <span
+              class="vuecal__cell-date"
+              :class="[view.id, { holiday: isHoliday(cell.startDate) }]"
+            >
+              {{ cell.startDate.format('D') }}
+            </span>
           </template>
         </vue-cal>
         <!-- 新規スケジュールの登録 -->
@@ -295,9 +307,9 @@
               }"
             >
               {{ view.startDate.format('YYYY年 M月 D日 (ddd)') }}
-              <template v-if="isHoliday(view.startDate)"
-                >({{ getHolidayName(view.startDate) }})</template
-              >
+              <template v-if="isHoliday(view.startDate)">
+                ({{ getHolidayName(view.startDate) }})
+              </template>
             </span>
           </template>
           <!-- today button -->
