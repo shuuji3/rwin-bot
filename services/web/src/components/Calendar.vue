@@ -172,6 +172,7 @@
                         rules.required,
                         rules.timeUnit10Min,
                         rules.startBeforeEnd,
+                        rules.notConflict,
                       ]"
                       required
                     ></v-text-field>
@@ -187,6 +188,7 @@
                         rules.required,
                         rules.timeUnit10Min,
                         rules.endAfterStart,
+                        rules.notConflict,
                       ]"
                       required
                     ></v-text-field>
@@ -195,7 +197,7 @@
                 <v-select
                   v-model="roomName"
                   :items="rooms.map(room => room.roomName)"
-                  :rules="[rules.required]"
+                  :rules="[rules.required, rules.notConflict]"
                   label="場所"
                   prepend-icon="mdi-map-marker-outline"
                   required
@@ -411,6 +413,9 @@ export default {
       return dayjs(this.selectedDate).format('YYYY-MM-DD');
     },
     rules() {
+      // 返すオブジェクトの内側のブロックでは、this = オブジェクトになってしまう。
+      // そのため、vmに退避する必要がある。
+      const vm = this;
       return {
         required: v => !!v || '必須項目です',
         timeUnit10Min: time => {
@@ -421,25 +426,54 @@ export default {
           return min % 10 === 0 || '時刻は10分単位で指定してください';
         },
         startBeforeEnd: startTime => {
-          if (!this.date || !this.end) {
+          if (!vm.date || !vm.end) {
             return true;
           }
           return (
-            dayjs(`${this.date} ${this.end}`) -
-              dayjs(`${this.date} ${startTime}`) >
+            dayjs(`${vm.date} ${vm.end}`) - dayjs(`${vm.date} ${startTime}`) >
               0 || '開始時刻は終了時刻より前でなければなりません'
           );
         },
         endAfterStart: endTime => {
-          if (!this.date || !this.start) {
+          if (!vm.date || !vm.start) {
             return true;
           }
           return (
-            dayjs(`${this.date} ${endTime}`) -
-              dayjs(`${this.date} ${this.start}`) >
+            dayjs(`${vm.date} ${endTime}`) - dayjs(`${vm.date} ${vm.start}`) >
               0 || '終了時刻は開始時刻より後でなければなりません'
           );
         },
+
+        /**
+         * 新規スケジュールの時間がコンフリクトしているかどうかをチェックする。
+         */
+        notConflict() {
+          const thisRoomTodayEvents = vm.events.filter(
+            event =>
+              event.roomName === vm.roomName &&
+              dayjs(event.start)
+                .toDate()
+                .isToday()
+          );
+          const newEventStart = dayjs(`${vm.date} ${vm.start}`);
+          const newEventEnd = dayjs(`${vm.date} ${vm.end}`);
+          return (
+            thisRoomTodayEvents.every(
+              event =>
+                newEventEnd <= dayjs(event.start) ||
+                dayjs(event.end) <= newEventStart
+            ) || 'この時間・場所には他の予定が登録されています'
+          );
+        },
+      };
+    },
+    newSchedule() {
+      return {
+        start: `${this.date} ${this.start}`,
+        end: `${this.date} ${this.end}`,
+        title: this.title,
+        roomName: this.roomName,
+        author: this.author,
       };
     },
   },
@@ -558,18 +592,14 @@ export default {
      * TODO: implement
      */
     async registerSchedule() {
-      const newSchedule = {
-        start: `${this.date} ${this.start}`,
-        end: `${this.date} ${this.end}`,
-        title: this.title,
-        roomName: this.roomName,
-        author: this.author,
-      };
-      console.log(newSchedule);
-      // await axios.post('http://localhost:3001/proxy/api/register', newSchedule);
+      console.log(this.newSchedule);
+      // await axios.post('http://localhost:3001/proxy/api/register', this.newSchedule);
       this.done = true;
     },
 
+    /**
+     * 新規スケジュール登録フォームをリセットする。
+     */
     resetForm() {
       this.done = false;
       this.start = null;
