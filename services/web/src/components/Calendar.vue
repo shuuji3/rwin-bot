@@ -392,7 +392,39 @@
           </v-card>
         </v-dialog>
 
-        <shortkey-dialog :show-shortkey-dialog="showShortkeyDialog" />
+        <!-- キーボードショートカットのヘルプを表示するダイアログ -->
+        <v-dialog v-model="showShortkeyDialog" width="600px">
+          <v-card>
+            <v-card-title>
+              <strong>ショートカットキー一覧</strong>
+            </v-card-title>
+            <v-card-text>
+              <v-simple-table>
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">ショートカットキー</th>
+                      <th class="text-left">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="shortkey in shortkeyConfig" :key="shortkey.name">
+                      <td>
+                        <template v-for="(key, i) in shortkey.keys">
+                          <code :key="i">{{ key.join(' + ') }}</code>
+                          <template v-if="i !== shortkey.keys.length - 1"
+                            >,
+                          </template>
+                        </template>
+                      </td>
+                      <td>{{ shortkey.help }}</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
       </v-col>
     </v-row>
   </v-container>
@@ -405,15 +437,13 @@ import holidayJp from '@holiday-jp/holiday_jp';
 import VueCal from 'vue-cal';
 import { mapState } from 'vuex';
 
-import ShortkeyDialog from './ShortkeyDialog';
+import { shortkeyConfig, shortkeyHandler, buildShortkeys } from './shortkey';
 
 import 'vue-cal/dist/vuecal.css';
 import 'vue-cal/dist/i18n/ja.js';
 
-const { shortkeyHandler, buildShortkeys } = require('./shortkey');
-
 export default {
-  components: { ShortkeyDialog, VueCal },
+  components: { VueCal },
 
   name: 'Calendar',
 
@@ -527,6 +557,9 @@ export default {
     },
     shortkeys() {
       return buildShortkeys();
+    },
+    shortkeyConfig() {
+      return shortkeyConfig();
     },
   },
 
