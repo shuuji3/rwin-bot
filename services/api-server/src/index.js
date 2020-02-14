@@ -1,5 +1,6 @@
-const express = require('express');
 const cors = require('cors');
+const express = require('express');
+const ICal = require('ical-generator');
 
 const createConnection = require('./createConnection');
 
@@ -11,6 +12,7 @@ const createConnection = require('./createConnection');
 
   await createIndexEndpoint(app);
   await createDatabaseEndpoints(knex, app);
+  await createICalEndpoint(knex, app);
 
   app.listen(port, () => console.log(`Listening on port ${port} ...`));
 })();
@@ -21,9 +23,9 @@ const createConnection = require('./createConnection');
  * @return {Promise<void>}
  */
 async function createIndexEndpoint(app) {
-  app.get('/', cors(), async (req, res) => {
-    console.log(`GET /`);
-    const apiList = ['GET /', 'GET /api/rooms', 'GET /api/schedules'];
+  app.get('/api/', cors(), async (req, res) => {
+    console.log(`GET /api/`);
+    const apiList = ['GET /api/', 'GET /api/rooms', 'GET /api/schedules', 'GET /api/schedules/ical'];
     res.json(apiList);
   });
 }
@@ -74,4 +76,52 @@ async function addDatabaseEndpoint(app, path, queryCallback) {
 
     res.json(schedules);
   });
+}
+
+/**
+ * スケジュールの iCal を返すエンドポイントを作成する。
+ * @param knex
+ * @param app
+ * @return {Promise<void>}
+ */
+async function createICalEndpoint(knex, app) {
+  const path = '/api/schedules/ical';
+  const rwinSchedules = await knex.select('*').from('schedules');
+  const ical = generateICal(rwinSchedules);
+
+  app.get(path, cors(), async (req, res) => {
+    console.log(`GET ${path}`);
+    res.set('Content-Type', 'text/calendar;charset=utf-8');
+    res.set('Content-Disposition', 'attachment; filename="rwin-bot.ics"');
+    res.send(ical);
+  });
+}
+
+/**
+ * rwin-bot のデータベースのスケジュールリストから iCal のテキストデータを生成する。
+ * @param {object[]} schedules
+ */
+function generateICal(schedules) {
+  const ical = ICal({
+    domain: 'rwin-bot',
+    events: schedules.map(convertToICal),
+  });
+
+  return ical.toString();
+}
+
+/**
+ * rwin-bot のデータベースの形式のスケジュールを iCal の形式に変換する。
+ * @param {object} rwinSchedule
+ * @return {{summary: string, start: Date, description: string, end: Date, location: string, url: string}}
+ */
+function convertToICal(rwinSchedule) {
+  return {
+    start: new Date(rwinSchedule.start),
+    end: new Date(rwinSchedule.end),
+    summary: rwinSchedule.title,
+    description: `予約者: ${rwinSchedule.author}`,
+    location: `${rwinSchedule.roomTypeName} / ${rwinSchedule.buildingName} / ${rwinSchedule.roomName}`,
+    url: `https://r1.rwin.jp/CCSTsukuba/ac_reserveedit/edit_${rwinSchedule.reservationID}`,
+  };
 }
