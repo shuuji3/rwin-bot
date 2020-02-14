@@ -132,6 +132,6 @@ function convertToICal(rwinSchedule) {
     summary: rwinSchedule.title,
     description: `予約者: ${rwinSchedule.author}`,
     location: `${rwinSchedule.roomTypeName} / ${rwinSchedule.buildingName} / ${rwinSchedule.roomName}`,
-    url: `https://r1.rwin.jp/CCSTsukuba/ac_reserveedit/edit_${rwinSchedule.reservationID}`,
+    url: rwinSchedule.reservationID != null ? `https://r1.rwin.jp/CCSTsukuba/ac_reserveedit/edit_${rwinSchedule.reservationID}`:'',
   };
 }
