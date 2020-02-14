@@ -1,4 +1,5 @@
 const cors = require('cors');
+const dayjs = require('dayjs');
 const express = require('express');
 const ICal = require('ical-generator');
 
@@ -25,7 +26,12 @@ const createConnection = require('./createConnection');
 async function createIndexEndpoint(app) {
   app.get('/api/', cors(), async (req, res) => {
     console.log(`GET /api/`);
-    const apiList = ['GET /api/', 'GET /api/rooms', 'GET /api/schedules', 'GET /api/schedules/ical'];
+    const apiList = [
+      'GET /api/',
+      'GET /api/rooms',
+      'GET /api/schedules',
+      'GET /api/schedules/ical',
+    ];
     res.json(apiList);
   });
 }
@@ -117,8 +123,12 @@ function generateICal(schedules) {
  */
 function convertToICal(rwinSchedule) {
   return {
-    start: new Date(rwinSchedule.start),
-    end: new Date(rwinSchedule.end),
+    start: dayjs(rwinSchedule.start)
+      .subtract(9, 'hour')
+      .toDate(),
+    end: dayjs(rwinSchedule.end)
+      .subtract(9, 'hour')
+      .toDate(),
     summary: rwinSchedule.title,
     description: `予約者: ${rwinSchedule.author}`,
     location: `${rwinSchedule.roomTypeName} / ${rwinSchedule.buildingName} / ${rwinSchedule.roomName}`,

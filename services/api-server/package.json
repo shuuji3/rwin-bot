@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "cors": "^2.8.5",
+    "dayjs": "^1.8.20",
     "express": "^4.17.1",
     "ical-generator": "^1.9.2",
     "knex": "^0.20.9",
