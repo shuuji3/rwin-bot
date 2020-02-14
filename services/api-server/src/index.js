@@ -19,7 +19,7 @@ const createConnection = require('./createConnection');
 })();
 
 /**
- * データベースのデータを取得するエンドポイントを作成する。
+ * 利用可能なエンドポイント一覧を表示するエンドポイントを作成する。
  * @param app
  * @return {Promise<void>}
  */
