@@ -402,7 +402,7 @@
         <v-dialog v-model="showRegisteringDialog" width="600px">
           <v-card>
             <v-card-title>
-              <strong>自動スケジュール登録の実行中</strong>
+              <strong>Rwin-bot がスケジュール登録を自動実行中...</strong>
             </v-card-title>
             <v-card-text>
               <v-img
@@ -412,18 +412,17 @@
                 height="200"
               />
               <p>
-                Bot
-                がスケジュール登録を実行中です。完了まで約1分かかります。タブを閉じても登録は行われますが、登録の完了を確認したい場合はそのまま待っていてください。
+                完了まで30秒〜1分ほどかかります。タブを閉じても登録は行われますが、登録が完了したことを確認したい場合はそのまま待っていてください。
               </p>
             </v-card-text>
           </v-card>
         </v-dialog>
 
-        <!-- スケジュール登録完了後に表示するダイアログ -->
-        <v-dialog v-model="showRegisterCompleteDialog" width="600px">
-          <v-card class="text-center">
+        <!-- スケジュール登録の結果を表示するダイアログ -->
+        <v-dialog v-model="showRegisterResultsDialog" width="600px">
+          <v-card class="text-center" v-if="registerResults.success">
             <v-card-title>
-              <strong>スケジュールの登録完了！</strong>
+              <strong>スケジュールの登録が完了！</strong>
             </v-card-title>
             <v-card-text>
               <v-img
@@ -439,8 +438,39 @@
                 class="success"
                 @click="
                   () => {
-                    showRegisterCompleteDialog = false;
+                    showRegisterResultsDialog = false;
                     isRegisterDone = true;
+                  }
+                "
+              >
+                <v-icon class="mr-3">mdi-check</v-icon>
+                OK
+              </v-btn>
+            </v-card-text>
+          </v-card>
+          <v-card class="text-center" v-else>
+            <v-card-title>
+              <strong>スケジュールの登録に失敗</strong>
+            </v-card-title>
+            <v-card-text>
+              <v-img
+                :src="require('@/assets/crying-face-emoji-android-10.png')"
+                class="my-3"
+                contain
+                height="200"
+              />
+              <p>
+                スケジュールの登録に失敗しました。
+              </p>
+              <p>
+                <strong>理由:</strong>
+                {{ this.registerResults.message }}
+              </p>
+              <v-btn
+                class="warning"
+                @click="
+                  () => {
+                    showRegisterResultsDialog = false;
                   }
                 "
               >
@@ -520,7 +550,8 @@ export default {
     selectedEvent: {},
     showEventDialog: false,
     showRegisteringDialog: false,
-    showRegisterCompleteDialog: false,
+    showRegisterResultsDialog: false,
+    registerResults: {},
     showShortkeyDialog: false,
     // TODO: refactor and generalize room objects
     roomNameToRoomMap: new Map([
@@ -724,15 +755,15 @@ export default {
     async registerSchedule() {
       this.showRegisteringDialog = true;
       const {
-        data: { success, message },
+        data,
       } = await axios.post(
         'http://localhost:8080/api/register-schedule',
         this.newSchedule,
         { headers: { 'content-type': 'application/json' } }
       );
-      console.log(`success: ${success} / message: ${message}`); // TODO: delete
+      this.registerResults = data;
       this.showRegisteringDialog = false;
-      this.showRegisterCompleteDialog = true;
+      this.showRegisterResultsDialog = true;
     },
 
     /**
