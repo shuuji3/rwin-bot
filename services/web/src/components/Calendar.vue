@@ -399,7 +399,11 @@
         </v-dialog>
 
         <!-- スケジュール登録中に表示するダイアログ -->
-        <v-dialog v-model="showRegisteringDialog" width="600px">
+        <v-dialog
+          persistent
+          v-model="showRegisteringDialog"
+          width="600px"
+        >
           <v-card>
             <v-card-title>
               <strong>Rwin-bot がスケジュール登録を自動実行中...</strong>
