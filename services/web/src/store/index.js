@@ -30,11 +30,7 @@ export default new Vuex.Store({
 });
 
 async function fetchRooms() {
-  const { data: rooms } = await axios.get(
-    'http://localhost:8080/api/rooms'
-  );
-  // });
-
+  const { data: rooms } = await axios.get('http://localhost:8080/api/rooms');
   return rooms;
 }
 
