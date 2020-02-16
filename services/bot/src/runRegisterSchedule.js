@@ -10,13 +10,7 @@ const BASE_URL = process.env.BASE_URL;
  * @param {{roomName: string, start: string, end: string, title: string, author: string}} newSchedule
  * @return {Promise<{success: Boolean, message: string}>}
  */
-async function runRegisterSchedule({
-  start,
-  end,
-  roomName,
-  title,
-  author,
-}) {
+async function runRegisterSchedule({ start, end, roomName, title, author }) {
   const browser = await getBrowser();
   const page = await login(browser);
   const [year, month, day, startHour, startMinute] = dayjs(start)
@@ -70,7 +64,7 @@ async function runRegisterSchedule({
       message = '予約が完了しました！';
     } else {
       success = false;
-      message = '予約の完了が確認できませんでした。予約を確認してください';
+      message = '予約の完了が確認できませんでした。予約を確認してください。';
     }
   } else if (dialogText.includes('既に予約されています')) {
     success = false;
@@ -90,7 +84,6 @@ async function waitRequest(page) {
   // 完了するまで待機しなければならない。
   await page.waitFor(500);
   await page.waitFor('#SEARCH_ROOM_RESULT_DATE > pre');
-  await page.waitFor(500);
 }
 
 /**
