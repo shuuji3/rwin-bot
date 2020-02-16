@@ -17,6 +17,17 @@
 
       <v-spacer></v-spacer>
 
+      <!-- iCal リンク -->
+      <v-btn
+        text
+        x-large
+        v-clipboard:copy="'http://localhost:8080/api/schedules/ical'"
+      >
+        <v-icon>mdi-calendar-export</v-icon>
+        <span class="ml-2 text-none">Copy iCal URL</span>
+      </v-btn>
+
+      <!-- GitHub リンク -->
       <v-btn
         href="https://github.com/shuuji3/rwin-bot"
         target="_blank"
@@ -24,7 +35,7 @@
         x-large
       >
         <v-icon>mdi-github-circle</v-icon>
-        <span class="ml-2 text-capitalize">GitHub</span>
+        <span class="ml-2 text-none">GitHub</span>
       </v-btn>
     </v-app-bar>
 
