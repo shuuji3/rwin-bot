@@ -1,43 +1,82 @@
 #!/usr/bin/env node
 
 const Queue = require('bull');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const express = require('express');
 const path = require('path');
+
+const runRegisterSchedule = require('./runRegisterSchedule');
 
 (async () => {
   await main();
 })();
 
-/**
- * Usageを表示する。
- */
-function printUsage() {
-  console.error(`Usage: node index.js [save-schedules | register-schedule]`);
-}
-
 async function main() {
-  const command = process.argv[2];
-  if (command == null) {
-    printUsage();
-    return;
-  }
-
+  // Setup queues
   const saveSchedulesQueue = new Queue('save-schedules', 'redis://redis');
-  const registerScheduleQueue = new Queue('register-schedule', 'redis://redis');
 
   saveSchedulesQueue.process(path.resolve('src/runSaveSchedules.js'));
-  registerScheduleQueue.process(path.resolve('src/runRegisterSchedule.js'));
 
-  if (command === 'save-schedules') {
+  // Setup server
+  const app = express();
+  app.use(bodyParser.json()); // for parsing application/json
+  const port = 3001;
+
+  createIndexEndpoint(app);
+  createSaveSchedulesEndpoint(app, saveSchedulesQueue);
+  createRegisterScheduleEndpoint(app);
+
+  app.listen(port, () => console.log(`Listening on port ${port} ...`));
+}
+
+/**
+ * 利用可能なエンドポイント一覧を表示するエンドポイントを作成する。
+ * @param app
+ * @return {void}
+ */
+function createIndexEndpoint(app) {
+  app.get('/api/', cors(), async (req, res) => {
+    console.log(`GET /api/`);
+    const apiList = [
+      'GET /api/',
+      'POST /api/save-schedules',
+      'POST /api/register-schedule',
+    ];
+    res.json(apiList);
+  });
+}
+
+/**
+ * 最新の予定を保存するリクエストを受けるエンドポイントを作成する。
+ * @param app
+ * @param {Queue} saveSchedulesQueue
+ * @return {void}
+ */
+function createSaveSchedulesEndpoint(app, saveSchedulesQueue) {
+  app.post('/api/save-schedules', cors(), async (req, res) => {
+    console.log(`GET /api/save-schedules`);
+
     saveSchedulesQueue.add();
-  } else if (command === 'register-schedule') {
-    // TODO: use requested schedule
-    const newSchedule = {
-      author: 'HPCS',
-      title: 'rwin-test',
-      roomName: '会議室C',
-      start: '2020-02-14 23:00',
-      end: '2020-02-14 23:30',
-    };
-    await registerScheduleQueue.add(newSchedule);
-  }
+
+    res.send('accepted save-schedules request');
+  });
+}
+
+/**
+ * 最新の予定を保存するリクエストを受けるエンドポイントを作成する。
+ * @param app
+ * @return {void}
+ */
+function createRegisterScheduleEndpoint(app) {
+  app.post('/api/register-schedule', cors(), async (req, res) => {
+    console.log(`GET /api/register-schedule`);
+    req.accepts('json');
+
+    const newSchedule = req.body;
+    console.log('[createRegisterScheduleEndpoint] newSchedule', newSchedule);
+    const { success, message } = await runRegisterSchedule(newSchedule);
+
+    res.json({ success, message });
+  });
 }

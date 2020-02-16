@@ -16,6 +16,7 @@ services:
       - 3001:3001
     env_file:
       - .env
+    restart: always
   api-server:
     build:
       context: ./services/api-server
@@ -29,8 +30,10 @@ services:
     ports:
       - 3000:3000
     command: node src/index.js
+    restart: always
   redis:
     image: redis:5-alpine
+    restart: always
   web:
     image: nginx:alpine
     volumes:
@@ -40,5 +43,6 @@ services:
         read_only: true
     ports:
       - 80:80
+    restart: always
 volumes:
   db:
