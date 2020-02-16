@@ -21,6 +21,7 @@ async function main() {
   // Setup server
   const app = express();
   app.use(bodyParser.json()); // for parsing application/json
+  app.use(cors());
   const port = 3001;
 
   createIndexEndpoint(app);
@@ -36,7 +37,7 @@ async function main() {
  * @return {void}
  */
 function createIndexEndpoint(app) {
-  app.get('/api/', cors(), async (req, res) => {
+  app.get('/api/', async (req, res) => {
     console.log(`GET /api/`);
     const apiList = [
       'GET /api/',
@@ -54,7 +55,7 @@ function createIndexEndpoint(app) {
  * @return {void}
  */
 function createSaveSchedulesEndpoint(app, saveSchedulesQueue) {
-  app.post('/api/save-schedules', cors(), async (req, res) => {
+  app.post('/api/save-schedules', async (req, res) => {
     console.log(`GET /api/save-schedules`);
 
     saveSchedulesQueue.add();
@@ -69,7 +70,7 @@ function createSaveSchedulesEndpoint(app, saveSchedulesQueue) {
  * @return {void}
  */
 function createRegisterScheduleEndpoint(app) {
-  app.post('/api/register-schedule', cors(), async (req, res) => {
+  app.post('/api/register-schedule', async (req, res) => {
     console.log(`GET /api/register-schedule`);
     req.accepts('json');
 
