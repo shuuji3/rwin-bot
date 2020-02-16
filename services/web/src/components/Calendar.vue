@@ -431,7 +431,7 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 import dayjs from 'dayjs';
 import holidayJp from '@holiday-jp/holiday_jp';
 import VueCal from 'vue-cal';
@@ -658,12 +658,19 @@ export default {
     },
 
     /**
-     * Rwin-botで予定を登録する。
-     * TODO: implement
+     * bot に新規スケジュールを登録してもらう。
      */
     async registerSchedule() {
       console.log(this.newSchedule);
-      // await axios.post('http://localhost:3001/proxy/api/register', this.newSchedule);
+      const {
+        success,
+        message,
+      } = await axios.post(
+        'http://localhost:8080/api/register-schedule',
+        this.newSchedule,
+        { headers: { 'content-type': 'application/json' } }
+      );
+      alert(`success: ${success} / message: ${message}`);
       this.done = true;
     },
 
