@@ -406,7 +406,7 @@
         >
           <v-card>
             <v-card-title>
-              <strong>Rwin-bot がスケジュール登録を自動実行中...</strong>
+              <strong>Rwin-bot がスケジュールを自動登録中...</strong>
             </v-card-title>
             <v-card-text>
               <v-img
