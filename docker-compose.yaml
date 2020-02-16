@@ -29,6 +29,8 @@ services:
         target: /db/
     ports:
       - 3000:3000
+    env_file:
+      - .env
     command: node src/index.js
     restart: always
   redis:

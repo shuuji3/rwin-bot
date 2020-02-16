@@ -1,15 +1,29 @@
 const cors = require('cors');
 const dayjs = require('dayjs');
 const express = require('express');
+const bearerToken = require('express-bearer-token');
 const ICal = require('ical-generator');
 
 const createConnection = require('./createConnection');
+
+const API_TOKEN = process.env.API_TOKEN;
+const BASE_URL = process.env.BASE_URL;
 
 (async () => {
   const knex = createConnection();
 
   const app = express();
   const port = 3000;
+
+  // Authorization
+  app.use(bearerToken());
+  app.all('*', (req, res, next) => {
+    if (req.token === API_TOKEN) {
+      next();
+    } else {
+      res.sendStatus(401);
+    }
+  });
 
   await createIndexEndpoint(app);
   await createDatabaseEndpoints(knex, app);
@@ -132,6 +146,9 @@ function convertToICal(rwinSchedule) {
     summary: rwinSchedule.title,
     description: `予約者: ${rwinSchedule.author}`,
     location: `${rwinSchedule.roomTypeName} / ${rwinSchedule.buildingName} / ${rwinSchedule.roomName}`,
-    url: rwinSchedule.reservationID != null ? `https://r1.rwin.jp/CCSTsukuba/ac_reserveedit/edit_${rwinSchedule.reservationID}`:'',
+    url:
+      rwinSchedule.reservationID != null
+        ? `${BASE_URL}/ac_reserveedit/edit_${rwinSchedule.reservationID}`
+        : '',
   };
 }

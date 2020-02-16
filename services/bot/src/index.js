@@ -4,7 +4,10 @@ const Queue = require('bull');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const express = require('express');
+const bearerToken = require('express-bearer-token');
 const path = require('path');
+
+const API_TOKEN = process.env.API_TOKEN;
 
 const runRegisterSchedule = require('./runRegisterSchedule');
 
@@ -20,9 +23,20 @@ async function main() {
 
   // Setup server
   const app = express();
+  app.use(bearerToken());
   app.use(bodyParser.json()); // for parsing application/json
   app.use(cors());
   const port = 3001;
+
+  // Authorization
+  app.use(bearerToken());
+  app.all('*', (req, res, next) => {
+    if (req.token === API_TOKEN) {
+      next();
+    } else {
+      res.sendStatus(401);
+    }
+  });
 
   createIndexEndpoint(app);
   createSaveSchedulesEndpoint(app, saveSchedulesQueue);
