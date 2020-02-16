@@ -94,10 +94,13 @@
 
 <style lang="scss" scoped>
 .holiday {
-  color: orangered;
-  &.month {
-    font-weight: bold;
-  }
+  color: #c83600;
+}
+.weekend {
+  color: steelblue;
+}
+.month {
+  font-weight: bold;
 }
 </style>
 
@@ -139,8 +142,9 @@
                   :class="[
                     view.id,
                     {
-                      holiday:
-                        isHoliday(cell.startDate) || isWeekend(cell.startDate),
+                      holiday: isHoliday(cell.startDate),
+                      weekend:
+                        isWeekend(cell.startDate) && !isHoliday(cell.startDate),
                     },
                   ]"
                 >
@@ -320,7 +324,9 @@
           <template v-slot:title="{ view }">
             <span
               :class="{
-                holiday: isHoliday(view.startDate) || isWeekend(view.startDate),
+                holiday: isHoliday(view.startDate),
+                weekend:
+                  isWeekend(view.startDate) && !isHoliday(view.startDate),
               }"
             >
               {{ view.startDate.format('YYYY年 M月 D日 (ddd)') }}
