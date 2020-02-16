@@ -1,7 +1,7 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "b20aefac96eafa301b00",
-    "url": "/css/app.ed305f82.css"
+    "revision": "67f5ae783b87353bdefd",
+    "url": "/css/app.1791541c.css"
   },
   {
     "revision": "b45c52d45f0498502c6d",
@@ -24,12 +24,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/img/rainbow-spinner.9cb4f7e9.svg"
   },
   {
-    "revision": "ed08f60f061c24da4d1d44b2ca7ba6dd",
+    "revision": "5758307c63825ca5e0ab5d291c58272e",
     "url": "/index.html"
   },
   {
-    "revision": "b20aefac96eafa301b00",
-    "url": "/js/app.c661ca96.js"
+    "revision": "67f5ae783b87353bdefd",
+    "url": "/js/app.68bc9765.js"
   },
   {
     "revision": "b45c52d45f0498502c6d",
