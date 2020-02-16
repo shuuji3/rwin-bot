@@ -74,7 +74,6 @@ function createRegisterScheduleEndpoint(app) {
     req.accepts('json');
 
     const newSchedule = req.body;
-    console.log('[createRegisterScheduleEndpoint] newSchedule', newSchedule);
     const { success, message } = await runRegisterSchedule(newSchedule);
 
     res.json({ success, message });

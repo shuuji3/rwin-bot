@@ -17,14 +17,6 @@ async function runRegisterSchedule({
   title,
   author,
 }) {
-  console.log('[runRegisterSchedule] newSchedule', {
-    start,
-    end,
-    roomName,
-    title,
-    author,
-  });
-
   const browser = await getBrowser();
   const page = await login(browser);
   const [year, month, day, startHour, startMinute] = dayjs(start)

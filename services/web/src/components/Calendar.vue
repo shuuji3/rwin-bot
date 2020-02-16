@@ -352,7 +352,7 @@
           </template>
         </vue-cal>
 
-        <!-- イベントクリック時に表示するダイアログ -->
+        <!-- スケジュールの詳細を表示するダイアログ -->
         <v-dialog v-model="showEventDialog" width="600px">
           <v-card>
             <v-card-title>
@@ -388,6 +388,27 @@
                   <strong>予約者:</strong> {{ selectedEvent.content }}
                 </li>
               </ul>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+
+        <!-- 表示するダイアログ -->
+        <v-dialog v-model="showRegisteringDialog" width="600px">
+          <v-card>
+            <v-card-title>
+              <strong>自動スケジュール登録の実行中</strong>
+            </v-card-title>
+            <v-card-text>
+              <v-img
+                :src="require('@/assets/rainbow-spinner.svg')"
+                class="my-3"
+                contain
+                height="200"
+              />
+              <p>
+                Bot
+                がスケジュール登録を実行中です。完了まで約1分かかります。タブを閉じても登録は行われますが、登録の成功を確認するには、そのままで待っていてください。
+              </p>
             </v-card-text>
           </v-card>
         </v-dialog>
@@ -460,6 +481,7 @@ export default {
     selectedDate: new Date(),
     selectedEvent: {},
     showEventDialog: false,
+    showRegisteringDialog: false,
     showShortkeyDialog: false,
     // TODO: refactor and generalize room objects
     roomNameToRoomMap: new Map([
@@ -661,16 +683,16 @@ export default {
      * bot に新規スケジュールを登録してもらう。
      */
     async registerSchedule() {
-      console.log(this.newSchedule);
+      this.showRegisteringDialog = true;
       const {
-        success,
-        message,
+        data: { success, message },
       } = await axios.post(
         'http://localhost:8080/api/register-schedule',
         this.newSchedule,
         { headers: { 'content-type': 'application/json' } }
       );
-      alert(`success: ${success} / message: ${message}`);
+      console.log(`success: ${success} / message: ${message}`); // TODO: delete
+      this.showRegisteringDialog = false;
       this.done = true;
     },
 
