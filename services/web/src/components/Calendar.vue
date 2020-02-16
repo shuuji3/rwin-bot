@@ -242,7 +242,7 @@
                   required
                 ></v-text-field>
                 <v-btn
-                  v-if="!done"
+                  v-if="!isRegisterDone"
                   type="submit"
                   :disabled="!valid"
                   color="error"
@@ -253,14 +253,14 @@
                   スケジュールを登録
                 </v-btn>
                 <v-btn
-                  v-if="done"
+                  v-if="isRegisterDone"
                   color="success"
                   class="mr-4"
                   large
                   @click.prevent="resetForm"
                 >
                   <v-icon class="mr-3">mdi-check</v-icon>
-                  登録リクエスト完了
+                  登録完了
                 </v-btn>
               </v-form>
             </v-expansion-panel-content>
@@ -398,7 +398,7 @@
           </v-card>
         </v-dialog>
 
-        <!-- 表示するダイアログ -->
+        <!-- スケジュール登録中に表示するダイアログ -->
         <v-dialog v-model="showRegisteringDialog" width="600px">
           <v-card>
             <v-card-title>
@@ -413,8 +413,40 @@
               />
               <p>
                 Bot
-                がスケジュール登録を実行中です。完了まで約1分かかります。タブを閉じても登録は行われますが、登録の成功を確認するには、そのままで待っていてください。
+                がスケジュール登録を実行中です。完了まで約1分かかります。タブを閉じても登録は行われますが、登録の完了を確認したい場合はそのまま待っていてください。
               </p>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+
+        <!-- スケジュール登録完了後に表示するダイアログ -->
+        <v-dialog v-model="showRegisterCompleteDialog" width="600px">
+          <v-card class="text-center">
+            <v-card-title>
+              <strong>スケジュールの登録完了！</strong>
+            </v-card-title>
+            <v-card-text>
+              <v-img
+                :src="require('@/assets/party-popper-emoji-android-10.png')"
+                class="my-3"
+                contain
+                height="200"
+              />
+              <p>
+                スケジュールの登録が完了しました！
+              </p>
+              <v-btn
+                class="success"
+                @click="
+                  () => {
+                    showRegisterCompleteDialog = false;
+                    isRegisterDone = true;
+                  }
+                "
+              >
+                <v-icon class="mr-3">mdi-check</v-icon>
+                OK
+              </v-btn>
             </v-card-text>
           </v-card>
         </v-dialog>
@@ -477,7 +509,7 @@ export default {
   data: () => ({
     // for form
     valid: false,
-    done: false,
+    isRegisterDone: false,
     start: null,
     end: null,
     title: '',
@@ -488,6 +520,7 @@ export default {
     selectedEvent: {},
     showEventDialog: false,
     showRegisteringDialog: false,
+    showRegisterCompleteDialog: false,
     showShortkeyDialog: false,
     // TODO: refactor and generalize room objects
     roomNameToRoomMap: new Map([
@@ -699,14 +732,14 @@ export default {
       );
       console.log(`success: ${success} / message: ${message}`); // TODO: delete
       this.showRegisteringDialog = false;
-      this.done = true;
+      this.showRegisterCompleteDialog = true;
     },
 
     /**
      * 新規スケジュール登録フォームをリセットする。
      */
     resetForm() {
-      this.done = false;
+      this.isRegisterDone = false;
       this.start = null;
       this.end = null;
       this.title = '';
