@@ -112,7 +112,7 @@
         <vue-cal
           xsmall
           style="height: 300px;"
-          class="vuecal--blue-theme vuecal--rounded-theme mb-5"
+          class="vuecal--green-theme vuecal--rounded-theme mb-5"
           locale="ja"
           :time="false"
           default-view="month"
@@ -303,7 +303,7 @@
         <vue-cal
           ref="vuecal"
           style="height: 100%"
-          class="vuecal--blue-theme"
+          class="vuecal--green-theme"
           locale="ja"
           default-view="day"
           :disable-views="['years', 'year', 'month', 'week']"
@@ -471,7 +471,7 @@
                 {{ this.registerResults.message }}
               </p>
               <v-btn
-                class="warning"
+                class="error"
                 @click="
                   () => {
                     showRegisterResultsDialog = false;

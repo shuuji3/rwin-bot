@@ -1,23 +1,23 @@
 module.exports = {
   pwa: {
     name: 'Rwin-bot',
-    themeColor: '#F44336',
-    msTileColor: '#F44336',
+    themeColor: '#7cb342',
+    msTileColor: '#7cb342',
     manifestOptions: {
-      background_color: '#EF9A9A',
+      background_color: '#f0f4c3',
     },
   },
   transpileDependencies: ['vuetify'],
   devServer: {
     proxy: {
-      "/api/save-schedules": {
-        target: "http://localhost:3001/",
+      '/api/save-schedules': {
+        target: 'http://localhost:3001/',
       },
-      "/api/register-schedule": {
-        target: "http://localhost:3001/",
+      '/api/register-schedule': {
+        target: 'http://localhost:3001/',
       },
-      "/api": {
-        target: "http://localhost:3000/",
+      '/api': {
+        target: 'http://localhost:3000/',
       },
     },
   },
