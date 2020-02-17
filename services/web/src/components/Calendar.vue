@@ -319,6 +319,7 @@
           :on-event-click="onClickSchedule"
           @cell-click="onClickCell"
           :selected-date="selectedDate"
+          @cell-focus="selectedDate = $event.date"
         >
           <!-- 日付ヘッダ -->
           <template v-slot:title="{ view }">
