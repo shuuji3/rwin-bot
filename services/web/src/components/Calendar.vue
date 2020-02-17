@@ -356,6 +356,23 @@
               {{ event.content }}
             </div>
           </template>
+          <!-- 日付変更ボタン -->
+          <template v-slot:arrow-prev>
+            <v-icon
+              aria-hidden="true"
+              class="v-icon material-icons"
+            >
+              mdi-arrow-left
+            </v-icon>
+          </template>
+          <template v-slot:arrow-next>
+            <v-icon
+              aria-hidden="true"
+              class="v-icon material-icons"
+            >
+              mdi-arrow-right
+            </v-icon>
+          </template>
         </vue-cal>
 
         <!-- スケジュールの詳細を表示するダイアログ -->
