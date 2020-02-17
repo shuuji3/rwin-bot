@@ -7,7 +7,7 @@ const ICal = require('ical-generator');
 const createConnection = require('./createConnection');
 
 const API_TOKEN = process.env.API_TOKEN;
-const BASE_URL = process.env.BASE_URL;
+const RWIN_BASE_URL = process.env.RWIN_BASE_URL;
 
 (async () => {
   const knex = createConnection();
@@ -148,7 +148,7 @@ function convertToICal(rwinSchedule) {
     location: `${rwinSchedule.roomTypeName} / ${rwinSchedule.buildingName} / ${rwinSchedule.roomName}`,
     url:
       rwinSchedule.reservationID != null
-        ? `${BASE_URL}/ac_reserveedit/edit_${rwinSchedule.reservationID}`
+        ? `${RWIN_BASE_URL}/ac_reserveedit/edit_${rwinSchedule.reservationID}`
         : '',
   };
 }

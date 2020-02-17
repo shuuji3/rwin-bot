@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');
 
 const USERNAME = process.env.USERNAME;
 const PASSWORD = process.env.PASSWORD;
-const BASE_URL = process.env.BASE_URL;
+const RWIN_BASE_URL = process.env.RWIN_BASE_URL;
 
 /**
  * ブラウザオブジェクトを作成する。
@@ -23,7 +23,7 @@ async function getBrowser() {
  */
 async function login(browser) {
   const page = await browser.newPage();
-  await page.goto(`${BASE_URL}/`);
+  await page.goto(`${RWIN_BASE_URL}/`);
   await page.content();
   await page.type('[name="txt_id"]', USERNAME);
   await page.type('[name="txt_pass"]', PASSWORD + '\n');

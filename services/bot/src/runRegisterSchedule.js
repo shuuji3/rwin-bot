@@ -3,7 +3,7 @@ module.exports = runRegisterSchedule;
 const dayjs = require('dayjs');
 const { getBrowser, login } = require('./puppeteerHelper');
 
-const BASE_URL = process.env.BASE_URL;
+const RWIN_BASE_URL = process.env.RWIN_BASE_URL;
 
 /**
  * Rwinで新規スケジュールを自動登録するタスクを実行する。
@@ -21,7 +21,7 @@ async function runRegisterSchedule({ start, end, roomName, title, author }) {
     .split(',');
 
   // 予約ページへ移動
-  await page.goto(`${BASE_URL}/ac_reserve1/`);
+  await page.goto(`${RWIN_BASE_URL}/ac_reserve1/`);
   await waitRequest(page);
 
   // スケジュールの情報を入力する

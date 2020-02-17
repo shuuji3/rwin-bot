@@ -5,7 +5,7 @@ const saveSchedulesToDatabase = require('./saveSchedulesToDatabase');
 const cleanDatabase = require('./cleanDatabase');
 const { getBrowser, login } = require('./puppeteerHelper');
 
-const BASE_URL = process.env.BASE_URL;
+const RWIN_BASE_URL = process.env.RWIN_BASE_URL;
 
 /**
  * データベースに今日以降のスケジュールを保存するタスクを実行する。
@@ -18,7 +18,7 @@ async function runSaveSchedules() {
   await cleanDatabase();
 
   // 「施設単位」ページへ移動
-  await page.goto(`${BASE_URL}/ac_reservestateroom`);
+  await page.goto(`${RWIN_BASE_URL}/ac_reservestateroom`);
   await page.waitFor('#ROOMLIST');
 
   const roomTypeNameToIDMap = await getRoomTypeNameToIDMap(page);
