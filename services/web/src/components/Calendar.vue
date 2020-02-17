@@ -528,7 +528,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import holidayJp from '@holiday-jp/holiday_jp';
 import VueCal from 'vue-cal';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import { shortkeyConfig, shortkeyHandler, buildShortkeys } from './shortkey';
 
@@ -660,6 +660,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(['SET_SHOW_ALERT', 'SET_ALERT_MESSAGE']),
     /**
      * ショートカットキーのイベントハンドラ。
      */
@@ -758,16 +759,27 @@ export default {
      */
     async registerSchedule() {
       this.showRegisteringDialog = true;
-      const {
-        data,
-      } = await axios.post(
-        `http://localhost:8080/api/register-schedule?${this.token}`,
-        this.newSchedule,
-        { headers: { 'content-type': 'application/json' } }
-      );
-      this.registerResults = data;
-      this.showRegisteringDialog = false;
-      this.showRegisterResultsDialog = true;
+      try {
+        const { data } = await axios.post(
+          `http://localhost:8080/api/register-schedule`,
+          this.newSchedule,
+          {
+            headers: {
+              'content-type': 'application/json',
+              Authorization: `Bearer ${this.token}`,
+            },
+          }
+        );
+        this.registerResults = data;
+      } catch (e) {
+        this.SET_SHOW_ALERT(true);
+        this.SET_ALERT_MESSAGE(
+          `スケジュールの登録に失敗しました。API Token を確認してください (error: ${e.message})`
+        );
+      } finally {
+        this.showRegisteringDialog = false;
+        this.showRegisterResultsDialog = true;
+      }
     },
 
     /**
