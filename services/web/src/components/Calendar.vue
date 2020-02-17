@@ -577,7 +577,7 @@ export default {
   }),
 
   computed: {
-    ...mapState(['rooms', 'schedules']),
+    ...mapState(['rooms', 'schedules', 'token']),
     splitDays() {
       return [...this.roomNameToRoomMap.values()];
     },
@@ -761,7 +761,7 @@ export default {
       const {
         data,
       } = await axios.post(
-        'http://localhost:8080/api/register-schedule',
+        `http://localhost:8080/api/register-schedule?${this.token}`,
         this.newSchedule,
         { headers: { 'content-type': 'application/json' } }
       );
