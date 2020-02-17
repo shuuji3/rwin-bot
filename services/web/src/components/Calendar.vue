@@ -359,18 +359,12 @@
           </template>
           <!-- 日付変更ボタン -->
           <template v-slot:arrow-prev>
-            <v-icon
-              aria-hidden="true"
-              class="v-icon material-icons"
-            >
+            <v-icon aria-hidden="true" class="v-icon material-icons">
               mdi-arrow-left
             </v-icon>
           </template>
           <template v-slot:arrow-next>
-            <v-icon
-              aria-hidden="true"
-              class="v-icon material-icons"
-            >
+            <v-icon aria-hidden="true" class="v-icon material-icons">
               mdi-arrow-right
             </v-icon>
           </template>
@@ -417,11 +411,7 @@
         </v-dialog>
 
         <!-- スケジュール登録中に表示するダイアログ -->
-        <v-dialog
-          persistent
-          v-model="showRegisteringDialog"
-          width="600px"
-        >
+        <v-dialog persistent v-model="showRegisteringDialog" width="600px">
           <v-card>
             <v-card-title>
               <strong>Rwin-bot がスケジュールを自動登録中...</strong>
@@ -644,9 +634,7 @@ export default {
           const thisRoomTodayEvents = vm.events.filter(
             event =>
               event.roomName === vm.roomName &&
-              dayjs(event.start)
-                .toDate()
-                .isToday()
+              dayjs(event.start).isSame(dayjs(vm.date), 'date')
           );
           const newEventStart = dayjs(`${vm.date} ${vm.start}`);
           const newEventEnd = dayjs(`${vm.date} ${vm.end}`);
