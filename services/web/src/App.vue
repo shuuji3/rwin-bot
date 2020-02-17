@@ -10,12 +10,23 @@
           transition="scale-transition"
           width="40"
         />
-        <v-toolbar-title class="ml-2 display-1 font-weight-bold">
+        <v-toolbar-title :class="['ml-2', 'font-weight-bold', {'display-1': !isMobile}]">
           <router-link to="/">Rwin-bot</router-link>
         </v-toolbar-title>
       </div>
 
       <v-spacer></v-spacer>
+
+      <!-- save-schedules ボタン -->
+      <v-btn
+        :text="!isMobile"
+        :icon="isMobile"
+        x-large
+        @click="saveSchedules"
+      >
+        <v-icon>mdi-reload</v-icon>
+        <span v-if="!isMobile" class="ml-2 text-none">Update Schedules</span>
+      </v-btn>
 
       <!-- Set API Token ボタン -->
       <v-btn
@@ -123,7 +134,7 @@ export default {
   },
   methods: {
     ...mapMutations(['SET_TOKEN']),
-    ...mapActions(['getRooms', 'getSchedules']),
+    ...mapActions(['getRooms', 'getSchedules', 'saveSchedules']),
     onSetToken() {
       this.SET_TOKEN(this.tokenValue);
       this.showTokenDialog = false;

@@ -38,10 +38,14 @@ export default new Vuex.Store({
     async getSchedules({ commit, state }) {
       commit('SET_SCHEDULES', await fetchSchedules({ commit, state }));
     },
+    async saveSchedules({ commit, state }) {
+      await postSaveSchedules({ commit, state });
+    },
   },
   modules: {},
 });
 
+// 部屋のデータを取得する。
 async function fetchRooms({ commit, state }) {
   try {
     const { data: rooms } = await axios.get('http://localhost:8080/api/rooms', {
@@ -59,6 +63,7 @@ async function fetchRooms({ commit, state }) {
   }
 }
 
+// スケジュールのデータを取得する。
 async function fetchSchedules({ commit, state }) {
   try {
     const { data: schedules } = await axios.get(
@@ -78,6 +83,23 @@ async function fetchSchedules({ commit, state }) {
     commit(
       'SET_ALERT_MESSAGE',
       `スケジュールデータの取得に失敗しました。API Token を確認してください (error: ${e.message})`
+    );
+    return [];
+  }
+}
+
+// 最新のスケジュールの保存リクエストを送信する。
+async function postSaveSchedules({ commit, state }) {
+  try {
+    await axios.post('http://localhost:8080/api/save-schedules', null, {
+      headers: { Authorization: `Bearer ${state.token}` },
+    });
+    commit('SET_SHOW_ALERT', false);
+  } catch (e) {
+    commit('SET_SHOW_ALERT', true);
+    commit(
+      'SET_ALERT_MESSAGE',
+      `最新スケジュールの保存リクエストに失敗しました。API Token を確認してください (error: ${e.message})`
     );
     return [];
   }
