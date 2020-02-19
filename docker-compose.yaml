@@ -13,7 +13,7 @@ services:
         source: db
         target: /db/
     ports:
-      - 3001:3001
+      - 3001
     env_file:
       - .env
     restart: always
@@ -28,7 +28,7 @@ services:
         source: db
         target: /db/
     ports:
-      - 3000:3000
+      - 3000
     env_file:
       - .env
     command: node src/index.js
@@ -44,7 +44,7 @@ services:
         target: /usr/share/nginx/html/
         read_only: true
     ports:
-      - 80:80
+      - 80
     restart: always
 volumes:
   db:
