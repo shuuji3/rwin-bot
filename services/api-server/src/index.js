@@ -17,6 +17,7 @@ const RWIN_BASE_URL = process.env.RWIN_BASE_URL;
 
   // Authorization
   app.use(bearerToken());
+  app.use(cors());
   app.all('*', (req, res, next) => {
     if (req.token === API_TOKEN) {
       next();
@@ -38,7 +39,7 @@ const RWIN_BASE_URL = process.env.RWIN_BASE_URL;
  * @return {Promise<void>}
  */
 async function createIndexEndpoint(app) {
-  app.get('/api/', cors(), async (req, res) => {
+  app.get('/api/', async (req, res) => {
     console.log(`GET /api/`);
     const apiList = [
       'GET /api/',
@@ -81,7 +82,7 @@ async function createDatabaseEndpoints(knex, app) {
  * @return {Promise<void>}
  */
 async function addDatabaseEndpoint(app, path, queryCallback) {
-  app.get(path, cors(), async (req, res) => {
+  app.get(path, async (req, res) => {
     console.log(`GET ${path}`);
 
     const schedules = await queryCallback(req);
@@ -109,7 +110,7 @@ async function createICalEndpoint(knex, app) {
   const rwinSchedules = await knex.select('*').from('schedules');
   const ical = generateICal(rwinSchedules);
 
-  app.get(path, cors(), async (req, res) => {
+  app.get(path, async (req, res) => {
     console.log(`GET ${path}`);
     res.set('Content-Type', 'text/calendar;charset=utf-8');
     res.set('Content-Disposition', 'attachment; filename="rwin-bot.ics"');
