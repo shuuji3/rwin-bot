@@ -12,6 +12,8 @@ export default new Vuex.Store({
     schedules: [],
     showAlert: false,
     alertMessage: '',
+    BOT_API_BASE_URL: process.env.VUE_APP_BOT_API_BASE_URL,
+    DB_API_BASE_URL: process.env.VUE_APP_DB_API_BASE_URL,
   },
   mutations: {
     SET_TOKEN(state, token) {
@@ -48,7 +50,7 @@ export default new Vuex.Store({
 // 部屋のデータを取得する。
 async function fetchRooms({ commit, state }) {
   try {
-    const { data: rooms } = await axios.get('http://localhost:8080/api/rooms', {
+    const { data: rooms } = await axios.get(`${process.env.VUE_APP_DB_API_BASE_URL}/api/rooms`, {
       headers: { Authorization: `Bearer ${state.token}` },
     });
     commit('SET_SHOW_ALERT', false);
@@ -67,7 +69,7 @@ async function fetchRooms({ commit, state }) {
 async function fetchSchedules({ commit, state }) {
   try {
     const { data: schedules } = await axios.get(
-      'http://localhost:8080/api/schedules',
+      `${process.env.VUE_APP_DB_API_BASE_URL}/api/schedules`,
       {
         headers: { Authorization: `Bearer ${state.token}` },
       }
@@ -91,7 +93,7 @@ async function fetchSchedules({ commit, state }) {
 // 最新のスケジュールの保存リクエストを送信する。
 async function postSaveSchedules({ commit, state }) {
   try {
-    await axios.post('http://localhost:8080/api/save-schedules', null, {
+    await axios.post(`${process.env.VUE_APP_BOT_API_BASE_URL}/api/save-schedules`, null, {
       headers: { Authorization: `Bearer ${state.token}` },
     });
     commit('SET_SHOW_ALERT', false);

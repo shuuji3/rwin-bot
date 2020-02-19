@@ -10,7 +10,9 @@
           transition="scale-transition"
           width="40"
         />
-        <v-toolbar-title :class="['ml-2', 'font-weight-bold', {'display-1': !isMobile}]">
+        <v-toolbar-title
+          :class="['ml-2', 'font-weight-bold', { 'display-1': !isMobile }]"
+        >
           <router-link to="/">Rwin-bot</router-link>
         </v-toolbar-title>
       </div>
@@ -18,12 +20,7 @@
       <v-spacer></v-spacer>
 
       <!-- save-schedules ボタン -->
-      <v-btn
-        :text="!isMobile"
-        :icon="isMobile"
-        x-large
-        @click="saveSchedules"
-      >
+      <v-btn :text="!isMobile" :icon="isMobile" x-large @click="saveSchedules">
         <v-icon>mdi-reload</v-icon>
         <span v-if="!isMobile" class="ml-2 text-none">Update Schedules</span>
       </v-btn>
@@ -45,7 +42,7 @@
         :icon="isMobile"
         x-large
         v-clipboard:copy="
-          `http://localhost:8080/api/schedules/ical?access_token=${tokenValue}`
+          `${DB_API_BASE_URL}/api/schedules/ical?access_token=${tokenValue}`
         "
       >
         <v-icon>mdi-calendar-export</v-icon>
@@ -127,7 +124,13 @@ export default {
     this.updateData();
   },
   computed: {
-    ...mapState(['token', 'showAlert', 'alertMessage']),
+    ...mapState([
+      'DB_API_BASE_URL',
+      'BOT_API_BASE_URL',
+      'token',
+      'showAlert',
+      'alertMessage',
+    ]),
     isMobile() {
       return ['sm', 'xs'].includes(this.$vuetify.breakpoint.name);
     },

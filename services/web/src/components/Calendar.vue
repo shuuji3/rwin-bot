@@ -585,7 +585,13 @@ export default {
   }),
 
   computed: {
-    ...mapState(['rooms', 'schedules', 'token']),
+    ...mapState([
+      'DB_API_BASE_URL',
+      'BOT_API_BASE_URL',
+      'rooms',
+      'schedules',
+      'token',
+    ]),
     splitDays() {
       return [...this.roomNameToRoomMap.values()];
     },
@@ -767,7 +773,7 @@ export default {
       this.showRegisteringDialog = true;
       try {
         const { data } = await axios.post(
-          `http://localhost:8080/api/register-schedule`,
+          `${this.BOT_API_BASE_URL}/api/register-schedule`,
           this.newSchedule,
           {
             headers: {
