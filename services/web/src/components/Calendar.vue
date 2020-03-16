@@ -17,6 +17,11 @@
     background-color: rgba(255, 250, 196, 0.5);
   }
 
+  &.mcu-1,
+  &.mcu-2 {
+    background-color: rgba(238, 238, 238, 0.5);
+  }
+
   &.xyz {
     background-color: rgba(255, 206, 178, 0.5);
   }
@@ -56,6 +61,11 @@
 
   &.ccs-c {
     background-color: rgb(255, 190, 40);
+  }
+
+  &.mcu-1,
+  &.mcu-2 {
+    background-color: rgb(160, 160, 160);
   }
 }
 
@@ -320,6 +330,7 @@
           @cell-click="onClickCell"
           :selected-date="selectedDate"
           @cell-focus="selectedDate = $event.date"
+          :min-split-width="150"
         >
           <!-- 日付ヘッダ -->
           <template v-slot:title="{ view }">
@@ -574,6 +585,14 @@ export default {
       ['会議室A', { label: '会議室A', class: 'ccs-a', split: 2 }],
       ['会議室B', { label: '会議室B', class: 'ccs-b', split: 3 }],
       ['会議室C', { label: '会議室C', class: 'ccs-c', split: 4 }],
+      [
+        'MCU 仮想会議室１(130.158.109.90##0001)',
+        { label: 'MCU 仮想会議室1', class: 'mcu-1', split: 5 },
+      ],
+      [
+        'MCU 仮想会議室2 (130.158.109.90##0002)',
+        { label: 'MCU 仮想会議室2', class: 'mcu-2', split: 6 },
+      ],
     ]),
     // TODO: refactor and generalize room objects
     roomSplitToRoomNameMap: new Map([
@@ -581,6 +600,8 @@ export default {
       [2, '会議室A'],
       [3, '会議室B'],
       [4, '会議室C'],
+      [5, 'MCU 仮想会議室１(130.158.109.90##0001)'],
+      [6, 'MCU 仮想会議室2 (130.158.109.90##0002)'],
     ]),
   }),
 
