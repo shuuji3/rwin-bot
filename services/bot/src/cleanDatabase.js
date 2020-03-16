@@ -20,12 +20,12 @@ async function cleanDatabase() {
  * @return {Promise<void>}
  */
 async function removeOldSchedulesFromToday(knex) {
-  const today = dayjs(dayjs().format('YYYY-MM-DD'));
+  const todayDateString = dayjs().add(9, 'hour').format('YYYY-MM-DD');
   /**
    * 今日の00:00時点のUNIX時間。
    * @type {number}
    */
-  const timeOfToday = today.toDate().getTime();
+  const timeOfToday = dayjs(todayDateString).toDate().getTime();
 
   await knex('schedules')
     .where('start', '>=', timeOfToday)
