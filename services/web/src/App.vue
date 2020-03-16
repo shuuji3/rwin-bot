@@ -13,7 +13,7 @@
         <v-toolbar-title
           :class="['ml-2', 'font-weight-bold', { 'display-1': !isMobile }]"
         >
-          <router-link to="/">Rwin-bot</router-link>
+          <router-link to="/home">Rwin-bot</router-link>
         </v-toolbar-title>
       </div>
 
