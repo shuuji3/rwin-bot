@@ -2,6 +2,10 @@
 
 Rwin という部屋予約システムのラッパーです。Rwin 自体をできるだけ操作せずにストレスフリーで部屋を予約できるようにするために作りました。
 
+## Screenshot
+
+![screenshot](screenshot.png)
+
 ## Architecture
 
 ![rwin-bot Architecture](architecture.svg)
