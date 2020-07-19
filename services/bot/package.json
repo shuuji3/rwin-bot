@@ -10,7 +10,7 @@
     "express": "^4.17.1",
     "express-bearer-token": "^2.4.0",
     "knex": "^0.20.9",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "puppeteer": "^2.1.1",
     "sqlite3": "^4.1.1"
   }
