@@ -2,7 +2,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dayjs": "^1.8.20",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-bearer-token": "^2.4.0",
     "ical-generator": "^1.9.2",
     "knex": "^0.20.9",
